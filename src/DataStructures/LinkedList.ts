@@ -127,6 +127,9 @@ export default class LinkedList<T> {
             }
         }
     }
+    toString() {
+        return this.toArray().join(', ');
+    }
     get(index: number): T | null {
         if (index < 0 || index >= this.count) {
             return null;
@@ -200,5 +203,17 @@ export default class LinkedList<T> {
             current.next = current.next.next;
             this.count--;
         }
+    }
+    toArray() {
+        const array: T[] = [];
+        let current = this.head;
+        while (current) {
+            array.push(current.data);
+            current = current.next;
+        }
+        return array;
+    }
+    getHead() {
+        return this.head ? this.head.data : null;
     }
 }
