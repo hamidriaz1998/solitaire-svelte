@@ -35,10 +35,4 @@
     background-color: white;
     background-size: cover;
   }
-  .card.face-down {
-    /* Additional styles for face-down cards if needed */
-  }
-  .card.face-up {
-    /* Additional styles for face-up cards if needed */
-  }
 </style>
