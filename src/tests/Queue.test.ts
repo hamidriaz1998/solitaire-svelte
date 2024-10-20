@@ -1,7 +1,5 @@
 import Queue from "../DataStructures/Queue.ts";
-import {
-  assertEquals,
-} from "@std/assert";
+import { assertEquals } from "@std/assert";
 
 Deno.test("Queue should enqueue elements", () => {
   const queue = new Queue<number>();

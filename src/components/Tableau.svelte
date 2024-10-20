@@ -39,7 +39,11 @@
             const { pileIndex: fromPileIndex, cardIndex: fromCardIndex } =
                 draggedCardIndex;
             try {
-                tableau.moveCardBetweenPiles(fromPileIndex, targetPileIndex);
+                tableau.moveCardBetweenPiles(
+                    fromPileIndex,
+                    targetPileIndex,
+                    fromCardIndex,
+                );
                 tableau = tableau;
                 draggedCardIndex = null;
             } catch (error) {
@@ -49,7 +53,7 @@
     }
 </script>
 
-<div class="tableau flex justify-center content-center">
+<div class="tableau flex justify-center content-center gap-32">
     {#each tableau.piles as pile, i}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
@@ -58,24 +62,31 @@
             on:dragleave={handleDragLeave}
             on:drop={(event) => handleDrop(event, i)}
         >
-            {#each pile.toArray() as card, j}
-                <div
-                    class="card"
-                    style="top: {j * 30}px;"
-                    draggable="true"
-                    on:dragstart={(event) => handleDragStart(event, i, j)}
-                    on:dragend={handleDragEnd}
-                >
-                    <Card {card} />
-                </div>
-            {/each}
+            {#if pile.isEmpty()}
+                <div class="placeholder" on:dragend={handleDragEnd}></div>
+            {:else}
+                {#each pile.toArray() as card, j}
+                    <div
+                        class="card"
+                        style="top: {j * 30}px;"
+                        draggable="true"
+                        on:dragstart={(event) => handleDragStart(event, i, j)}
+                        on:dragend={handleDragEnd}
+                    >
+                        <Card {card} />
+                    </div>
+                {/each}
+            {/if}
         </div>
     {/each}
 </div>
 
 <style>
     .pile {
-        margin: 60px;
+        position: relative;
+        width: 109px;
+        height: 150px;
+        border: 1px solid transparent;
     }
     .card {
         position: absolute;
@@ -89,5 +100,11 @@
     }
     .pile.drag-over {
         border: 2px dashed #000;
+    }
+    .placeholder {
+        width: 109px;
+        height: 150px;
+        border: 1px dashed #ccc;
+        background-color: rgba(0, 0, 0, 0.1);
     }
 </style>

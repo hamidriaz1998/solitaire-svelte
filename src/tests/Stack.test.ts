@@ -1,7 +1,5 @@
 import Stack from "../DataStructures/Stack.ts";
-import {
-  assertEquals,
-} from "@std/assert";
+import { assertEquals } from "@std/assert";
 
 Deno.test("Stack should push elements", () => {
   const stack = new Stack<number>();

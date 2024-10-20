@@ -10,7 +10,6 @@
 # https://hub.docker.com/r/library/node/tags/
 image: denoland/deno:latest
 
-
 # This folder is cached between builds
 # https://docs.gitlab.com/ee/ci/yaml/index.html#cache
 cache:
@@ -21,4 +20,3 @@ test_async:
   script:
     - deno install
     - deno test
-

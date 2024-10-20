@@ -1,8 +1,5 @@
 import { Deck } from "../gameLogic/Deck.ts";
-import {
-  assertEquals,
-  assertNotEquals,
-} from "@std/assert";
+import { assertEquals, assertNotEquals } from "@std/assert";
 
 Deno.test("Deck should initialize with 52 cards", () => {
   const deck = new Deck();

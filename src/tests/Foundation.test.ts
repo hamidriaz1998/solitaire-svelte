@@ -1,7 +1,4 @@
-import {
-  assertEquals,
-  assertThrows,
-} from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { Foundation } from "../gameLogic/Foundation.ts";
 import { Card, Rank, Suit } from "../gameLogic/Card.ts";
 

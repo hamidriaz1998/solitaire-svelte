@@ -1,8 +1,5 @@
 import LinkedList from "../DataStructures/LinkedList.ts";
-import {
-  assertEquals,
-  assertNotEquals,
-} from "@std/assert";
+import { assertEquals, assertNotEquals } from "@std/assert";
 
 const list = new LinkedList<number>();
 assertEquals(list.size, 0);

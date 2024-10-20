@@ -1,7 +1,4 @@
-import {
-  assertEquals,
-  assertThrows,
-} from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { Tableau } from "../gameLogic/Tableau.ts";
 import { Deck } from "../gameLogic/Deck.ts";
 
