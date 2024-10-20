@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card, Suit } from "../gameLogic/Card";
+  import { Card } from "../gameLogic/Card";
   export let card: Card;
 </script>
 

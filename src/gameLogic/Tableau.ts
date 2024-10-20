@@ -35,6 +35,7 @@ export class Tableau {
     if (fromCard && toCard && fromCard.canPlaceOn(toCard)) {
       this.addCardToPile(fromCard, toPile);
       this.piles[fromPile].deleteTail();
+      this.piles[fromPile].getTail()?.flip();
     } else {
       throw new Error("Invalid move");
     }

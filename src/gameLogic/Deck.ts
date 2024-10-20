@@ -1,4 +1,4 @@
-import { Card, Rank, Suit } from "./Card.ts";
+import { Card, type Rank, type Suit } from "./Card.ts";
 
 export class Deck {
   cards: Card[] = [];
@@ -8,14 +8,13 @@ export class Deck {
   }
 
   initializeDeck() {
-    for (const suit in Suit) {
-      if (isNaN(Number(suit))) continue; // Skip string representations of the enum
-      for (const rank in Rank) {
-        if (isNaN(Number(rank))) continue;
+    const suits: Suit[] = ["Hearts", "Diamonds", "Clubs", "Spades"];
+    for (let i = 0; i < suits.length; i++) {
+      for (let rank = 1; rank <= 13; rank++) {
         this.cards.push(
           new Card(
-            Suit[suit as keyof typeof Suit],
-            Rank[rank as keyof typeof Rank],
+            suits[i] as Suit,
+            rank as Rank,
           ),
         );
       }
