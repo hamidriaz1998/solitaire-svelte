@@ -1,25 +1,14 @@
 <script lang="ts">
-  export let value: number;
-  export let suit: string;
-  export let faceUp: boolean = false;
-  export let color: string;
-
-  function toggleFaceUp() {
-    faceUp = !faceUp;
-  }
-  function incrementCard() {
-    value = (value % 13) + 1;
-  }
+  import { Card, Suit } from "../gameLogic/Card";
+  export let card: Card;
 </script>
 
 <div
-  class="card {faceUp ? 'face-up' : 'face-down'}"
-  style="--color: {color}; background-image: {faceUp
-    ? `url('/Cards/${suit}/${value}.png')`
+  class="card {card.faceUp ? 'face-up' : 'face-down'}"
+  style="background-image: {card.faceUp
+    ? `url('/Cards/${card.suit}/${card.rank}.png')`
     : `url('/Cards/card_back.png')`}"
 ></div>
-<button on:click={toggleFaceUp}>toggle</button>
-<button on:click={incrementCard}>incrementCard</button>
 
 <style>
   .card {
