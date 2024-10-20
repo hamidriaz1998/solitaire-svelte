@@ -24,4 +24,7 @@ export default class Stack<T> {
   print() {
     console.log(this.items.toString());
   }
+  toArray(): T[] {
+    return this.items;
+  }
 }

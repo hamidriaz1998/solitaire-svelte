@@ -1,13 +1,13 @@
-import LinkedList from "../DataStructures/LinkedList.ts";
+import Stack from "../DataStructures/Stack.ts";
 import { Card } from "./Card.ts";
 import { Deck } from "./Deck.ts";
 
 export class Tableau {
-  piles: LinkedList<Card>[];
+  piles: Stack<Card>[];
   constructor(deck: Deck) {
     this.piles = [];
     for (let i = 0; i < 7; i++) {
-      this.piles.push(new LinkedList<Card>());
+      this.piles.push(new Stack<Card>());
     }
     for (let i = 0; i < 7; i++) {
       for (let j = 0; j <= i; j++) {
@@ -18,26 +18,42 @@ export class Tableau {
         if (j === i) {
           card.flip();
         }
-        this.piles[i].append(card);
+        this.piles[i].push(card);
       }
     }
   }
   private addCardToPile(card: Card, pileIndex: number) {
     if (pileIndex >= 0 && pileIndex < this.piles.length) {
-      this.piles[pileIndex].append(card);
+      this.piles[pileIndex].push(card);
     } else {
       throw new Error("Invalid pile index");
     }
   }
   moveCardBetweenPiles(fromPile: number, toPile: number) {
-    const fromCard = this.piles[fromPile].getTail();
-    const toCard = this.piles[toPile].getTail();
-    if (fromCard && toCard && fromCard.canPlaceOn(toCard)) {
-      this.addCardToPile(fromCard, toPile);
-      this.piles[fromPile].deleteTail();
-      this.piles[fromPile].getTail()?.flip();
+    const fromCard = this.piles[fromPile].peek();
+    const toCard = this.piles[toPile].peek();
+
+    if (!fromCard) {
+      throw new Error("No card to move from the source pile");
+    }
+
+    if (toCard) {
+      if (fromCard.canPlaceOn(toCard)) {
+        this.addCardToPile(fromCard, toPile);
+        this.piles[fromPile].pop();
+        this.piles[fromPile].peek()?.flip();
+      } else {
+        throw new Error("Invalid move");
+      }
     } else {
-      throw new Error("Invalid move");
+      // Handle the case where the destination pile is empty
+      if (fromCard.rank === 13) {
+        this.addCardToPile(fromCard, toPile);
+        this.piles[fromPile].pop();
+        this.piles[fromPile].peek()?.flip();
+      } else {
+        throw new Error("Only a King can be moved to an empty pile");
+      }
     }
   }
 }
