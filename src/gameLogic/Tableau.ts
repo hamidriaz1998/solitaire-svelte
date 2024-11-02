@@ -1,14 +1,14 @@
-import Stack from "../DataStructures/Stack.ts";
+import LinkedList from "../DataStructures/LinkedList.ts";
 import { Card } from "./Card.ts";
 import { Deck } from "./Deck.ts";
 
 export class Tableau {
-  piles: Stack<Card>[];
+  piles: LinkedList<Card>[];
 
   constructor(deck: Deck) {
     this.piles = [];
     for (let i = 0; i < 7; i++) {
-      this.piles.push(new Stack<Card>());
+      this.piles.push(new LinkedList<Card>());
     }
     for (let i = 0; i < 7; i++) {
       for (let j = 0; j <= i; j++) {
@@ -19,43 +19,33 @@ export class Tableau {
         if (j === i) {
           card.flip();
         }
-        this.piles[i].push(card);
+        this.piles[i].append(card);
       }
     }
   }
 
   private addCardToPile(card: Card, pileIndex: number) {
     if (pileIndex >= 0 && pileIndex < this.piles.length) {
-      this.piles[pileIndex].push(card);
+      this.piles[pileIndex].append(card);
     } else {
       throw new Error("Invalid pile index");
     }
   }
 
-  private getStackOfCardsToMove(
-    pileIndex: number,
-    cardIndex: number,
-  ): Stack<Card> {
-    const stack = new Stack<Card>();
-    const tempStack = new Stack<Card>();
-
-    const pileArray = this.piles[pileIndex].toArray();
-
-    for (let i = cardIndex; i < pileArray.length; i++) {
-      tempStack.push(pileArray[i]);
-    }
-
-    while (!tempStack.isEmpty()) {
-      stack.push(tempStack.pop()!);
-    }
-
-    return stack;
-  }
-
   moveCardBetweenPiles(fromPile: number, toPile: number, cardIndex: number) {
-    const stack = this.getStackOfCardsToMove(fromPile, cardIndex);
-    const fromCard = stack.peek();
-    const toCard = this.piles[toPile].peek();
+    const fromPileList = this.piles[fromPile];
+    const toPileList = this.piles[toPile];
+    const size = fromPileList.size;
+
+    if (cardIndex < 0 || cardIndex >= size) {
+      throw new Error("Invalid card index");
+    }
+
+    // Cut the moving cards from the source pile
+    const movingCards = fromPileList.cutFromIndex(cardIndex);
+
+    const fromCard = movingCards.getHead();
+    const toCard = toPileList.getTail();
 
     if (!fromCard) {
       throw new Error("No card to move from the source pile");
@@ -63,41 +53,24 @@ export class Tableau {
 
     if (toCard) {
       if (fromCard.canPlaceOn(toCard)) {
-        while (!stack.isEmpty()) {
-          this.addCardToPile(stack.pop()!, toPile);
-        }
-        this.removeCardsFromPile(fromPile, cardIndex);
-        const nextCard = this.piles[fromPile].peek();
-        if (nextCard && !nextCard.faceUp) {
-          nextCard.flip();
-        }
+        // Append the moving cards to the destination pile
+        toPileList.concat(movingCards);
+        fromPileList.getTail()?.flip();
       } else {
-        throw new Error(
-          "Invalid move. The card cannot be placed on the destination pile.",
-        );
+        // Move cards back to the source pile
+        fromPileList.concat(movingCards);
+        throw new Error("Invalid move");
       }
     } else {
+      // Handle the case where the destination pile is empty
       if (fromCard.rank === 13) {
-        while (!stack.isEmpty()) {
-          this.addCardToPile(stack.pop()!, toPile);
-        }
-        this.removeCardsFromPile(fromPile, cardIndex);
-        const nextCard = this.piles[fromPile].peek();
-        if (nextCard && !nextCard.faceUp) {
-          nextCard.flip();
-        }
+        toPileList.concat(movingCards);
+        fromPileList.getTail()?.flip();
       } else {
-        throw new Error("Only a King can be moved to an empty pile.");
+        // Move cards back to the source pile
+        fromPileList.concat(movingCards);
+        throw new Error("Only a King can be moved to an empty pile");
       }
     }
-  }
-
-  private removeCardsFromPile(pileIndex: number, cardIndex: number) {
-    const pileArray = this.piles[pileIndex].toArray();
-    const newStack = new Stack<Card>();
-    for (let i = 0; i < cardIndex; i++) {
-      newStack.push(pileArray[i]);
-    }
-    this.piles[pileIndex] = newStack;
   }
 }

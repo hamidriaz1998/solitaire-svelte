@@ -219,4 +219,67 @@ export default class LinkedList<T> {
   getTail() {
     return this.tail ? this.tail.data : null;
   }
+
+  private getNodeAtIndex(index: number): Node<T> | null {
+    if (index < 0 || index >= this.count) {
+      return null;
+    }
+    let current = this.head;
+    for (let i = 0; i < index; i++) {
+      if (current) {
+        current = current.next;
+      }
+    }
+    return current;
+  }
+
+  cutFromIndex(index: number): LinkedList<T> {
+    if (index < 0 || index >= this.count) {
+      throw new Error("Invalid index");
+    }
+
+    const newList = new LinkedList<T>();
+    if (index === 0) {
+      // Move all nodes to the new list
+      newList.head = this.head;
+      newList.tail = this.tail;
+      newList.count = this.count;
+
+      this.head = null;
+      this.tail = null;
+      this.count = 0;
+    } else {
+      const prevNode = this.getNodeAtIndex(index - 1);
+      if (prevNode && prevNode.next) {
+        newList.head = prevNode.next;
+        newList.tail = this.tail;
+        newList.count = this.count - index;
+
+        prevNode.next = null;
+        this.tail = prevNode;
+        this.count = index;
+      }
+    }
+
+    return newList;
+  }
+
+  concat(list: LinkedList<T>) {
+    if (list.isEmpty()) {
+      return;
+    }
+    if (this.isEmpty()) {
+      this.head = list.head;
+      this.tail = list.tail;
+      this.count = list.count;
+    } else if (this.tail) {
+      this.tail.next = list.head;
+      this.tail = list.tail;
+      this.count += list.count;
+    }
+    // Clear the concatenated list
+    list.head = null;
+    list.tail = null;
+    list.count = 0;
+  }
 }
