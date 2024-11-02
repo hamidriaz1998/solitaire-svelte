@@ -2,7 +2,7 @@ import Stack from "../DataStructures/Stack.ts";
 import { Card } from "./Card.ts";
 
 export class Foundation {
-  private piles: Stack<Card>[];
+  piles: Stack<Card>[];
 
   constructor() {
     this.piles = [];

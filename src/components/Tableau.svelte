@@ -53,7 +53,7 @@
     }
 </script>
 
-<div class="tableau flex justify-center content-center gap-32">
+<div class="tableau">
     {#each tableau.piles as pile, i}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div
@@ -68,7 +68,7 @@
                 {#each pile.toArray() as card, j}
                     <div
                         class="card"
-                        style="top: {j * 30}px;"
+                        style="--card-index: {j};"
                         draggable="true"
                         on:dragstart={(event) => handleDragStart(event, i, j)}
                         on:dragend={handleDragEnd}
@@ -82,17 +82,22 @@
 </div>
 
 <style>
+    .tableau {
+        display: flex;
+        justify-content: center;
+        gap: 16px; /* Adjust gap between piles */
+    }
     .pile {
         position: relative;
         width: 109px;
-        height: 150px;
-        border: 1px solid transparent;
+        /* Remove fixed height to allow pile to grow with number of cards */
     }
     .card {
         position: absolute;
         width: 109px;
         height: 150px;
         transition: transform 0.2s ease;
+        top: calc(var(--card-index) * 30px);
     }
     .card.dragging {
         opacity: 0.5;
@@ -104,7 +109,19 @@
     .placeholder {
         width: 109px;
         height: 150px;
-        border: 1px dashed #ccc;
-        background-color: rgba(0, 0, 0, 0.1);
+        border: 2px dashed #ffd700;
+        background: linear-gradient(135deg, #e0eafc, #cfdef3);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .placeholder::after {
+        content: "Drop Here";
+        font-size: 16px;
+        color: #555;
+        font-weight: bold;
     }
 </style>
