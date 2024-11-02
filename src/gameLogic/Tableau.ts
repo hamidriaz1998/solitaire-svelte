@@ -24,7 +24,7 @@ export class Tableau {
     }
   }
 
-  private addCardToPile(card: Card, pileIndex: number) {
+  addCardToPile(card: Card, pileIndex: number) {
     if (pileIndex >= 0 && pileIndex < this.piles.length) {
       this.piles[pileIndex].append(card);
     } else {
@@ -74,3 +74,6 @@ export class Tableau {
     }
   }
 }
+
+// Ensure this method exists in LinkedList
+// removeAt is assumed to remove a card at a specific index

@@ -282,4 +282,42 @@ export default class LinkedList<T> {
     list.tail = null;
     list.count = 0;
   }
+
+  getAt(index: number): T | undefined {
+    let current = this.head;
+    let i = 0;
+    while (current && i < index) {
+      current = current.next;
+      i++;
+    }
+    return current ? current.data : undefined;
+  }
+
+  removeAt(index: number): void {
+    if (index < 0 || index >= this.size) {
+      throw new Error("Index out of bounds");
+    }
+    if (index === 0) {
+      this.head = this.head?.next || null;
+      if (!this.head) {
+        this.tail = null;
+      }
+    } else {
+      let current = this.head;
+      let prev: Node<T> | null = null;
+      let i = 0;
+      while (current && i < index) {
+        prev = current;
+        current = current.next;
+        i++;
+      }
+      if (prev && current) {
+        prev.next = current.next;
+        if (!prev.next) {
+          this.tail = prev;
+        }
+      }
+    }
+    this.count--;
+  }
 }

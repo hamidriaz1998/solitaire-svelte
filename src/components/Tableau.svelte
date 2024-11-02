@@ -1,7 +1,18 @@
 <script lang="ts">
+    import { onDestroy } from "svelte";
+    import { gameStore } from "../stores/gameStore";
     import Card from "./Card.svelte";
-    import { Tableau } from "../gameLogic/Tableau";
-    export let tableau: Tableau;
+    import type { Game } from "../gameLogic/Game.ts";
+
+    let game: Game | null = null;
+
+    const unsubscribe = gameStore.subscribe((value) => {
+        game = value;
+    });
+
+    onDestroy(() => {
+        unsubscribe();
+    });
 
     let draggedCardIndex: { pileIndex: number; cardIndex: number } | null =
         null;
@@ -13,84 +24,92 @@
     ) {
         draggedCardIndex = { pileIndex, cardIndex };
         event.dataTransfer?.setData(
-            "text/plain",
+            "application/json",
             JSON.stringify(draggedCardIndex),
         );
-        (event.currentTarget as HTMLElement)?.classList.add("dragging");
+        (event.currentTarget as HTMLElement).classList.add("dragging");
     }
 
     function handleDragEnd(event: DragEvent) {
-        (event.currentTarget as HTMLElement)?.classList.remove("dragging");
+        (event.currentTarget as HTMLElement).classList.remove("dragging");
     }
 
     function handleDragOver(event: DragEvent) {
         event.preventDefault();
-        (event.currentTarget as HTMLElement)?.classList.add("drag-over");
+        (event.currentTarget as HTMLElement).classList.add("drag-over");
     }
 
     function handleDragLeave(event: DragEvent) {
-        (event.currentTarget as HTMLElement)?.classList.remove("drag-over");
+        (event.currentTarget as HTMLElement).classList.remove("drag-over");
     }
 
     function handleDrop(event: DragEvent, targetPileIndex: number) {
         event.preventDefault();
-        (event.currentTarget as HTMLElement)?.classList.remove("drag-over");
-        if (draggedCardIndex) {
+        (event.currentTarget as HTMLElement).classList.remove("drag-over");
+
+        const data = event.dataTransfer?.getData("application/json");
+        if (data) {
             const { pileIndex: fromPileIndex, cardIndex: fromCardIndex } =
-                draggedCardIndex;
+                JSON.parse(data);
             try {
-                tableau.moveCardBetweenPiles(
+                game?.moveCardBetweenTableauPiles(
                     fromPileIndex,
                     targetPileIndex,
                     fromCardIndex,
                 );
-                tableau = tableau;
+                gameStore.set(game!);
                 draggedCardIndex = null;
             } catch (error) {
                 console.error("Invalid move", error);
             }
+        } else {
+            console.log("No drag data found.");
         }
     }
 </script>
 
 <div class="tableau">
-    {#each tableau.piles as pile, i}
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div
-            class="pile"
-            on:dragover={handleDragOver}
-            on:dragleave={handleDragLeave}
-            on:drop={(event) => handleDrop(event, i)}
-        >
-            {#if pile.isEmpty()}
-                <div class="placeholder" on:dragend={handleDragEnd}></div>
-            {:else}
-                {#each pile.toArray() as card, j}
-                    <div
-                        class="card"
-                        style="--card-index: {j};"
-                        draggable="true"
-                        on:dragstart={(event) => handleDragStart(event, i, j)}
-                        on:dragend={handleDragEnd}
-                    >
-                        <Card {card} />
-                    </div>
-                {/each}
-            {/if}
-        </div>
-    {/each}
+    {#if game}
+        {#each game.tableau.piles as pile, i}
+            <div
+                class="pile"
+                role="list"
+                on:dragover={handleDragOver}
+                on:dragleave={handleDragLeave}
+                on:drop={(event) => handleDrop(event, i)}
+            >
+                {#if pile.isEmpty()}
+                    <div class="placeholder"></div>
+                {:else}
+                    {#each pile.toArray() as card, j}
+                        <div
+                            role="listitem"
+                            class="card"
+                            style="top: {j * 30}px;"
+                            draggable="true"
+                            on:dragstart={(event) =>
+                                handleDragStart(event, i, j)}
+                            on:dragend={handleDragEnd}
+                        >
+                            <Card {card} />
+                        </div>
+                    {/each}
+                {/if}
+            </div>
+        {/each}
+    {/if}
 </div>
 
 <style>
     .tableau {
         display: flex;
         justify-content: center;
-        gap: 16px; /* Adjust gap between piles */
+        gap: 32px;
     }
     .pile {
         position: relative;
         width: 109px;
-        /* Remove fixed height to allow pile to grow with number of cards */
+        min-height: 150px;
     }
     .card {
         position: absolute;
@@ -109,19 +128,7 @@
     .placeholder {
         width: 109px;
         height: 150px;
-        border: 2px dashed #ffd700;
-        background: linear-gradient(135deg, #e0eafc, #cfdef3);
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .placeholder::after {
-        content: "Drop Here";
-        font-size: 16px;
-        color: #555;
-        font-weight: bold;
+        border: 1px dashed #ccc;
+        background-color: rgba(0, 0, 0, 0.05);
     }
 </style>
