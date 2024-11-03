@@ -30,6 +30,11 @@
 </main>
 
 <style>
+  main {
+    background-image: url("/Backgrounds/background_2.png");
+    background-size: cover;
+    height: 100vh;
+  }
   .game-container {
     display: flex;
     flex-direction: column;
