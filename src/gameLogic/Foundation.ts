@@ -1,38 +1,65 @@
 import Stack from "../DataStructures/Stack.ts";
-import { Card } from "./Card.ts";
+import { Card, type Suit } from "./Card.ts";
 
-export class Foundation {
-  piles: Stack<Card>[];
+class Pile {
+  pile: Stack<Card>;
+  suit: Suit;
 
-  constructor() {
-    this.piles = [];
-    for (let i = 0; i < 4; i++) {
-      this.piles.push(new Stack<Card>());
-    }
+  constructor(suit: Suit) {
+    this.pile = new Stack<Card>();
+    this.suit = suit;
   }
 
-  addCardToPile(card: Card, pileIndex: number) {
+  push(card: Card): void {
     if (
-      pileIndex >= 0 && pileIndex < this.piles.length &&
-      this.canPlaceOn(card, pileIndex)
+      card.suit === this.suit &&
+      (this.pile.isEmpty() && card.rank === 1 ||
+        !this.pile.isEmpty() && this.pile.peek() &&
+        card.rank === this.pile.peek()?.rank + 1)
     ) {
-      this.piles[pileIndex].push(card);
-    } else {
+      this.pile.push(card);
+    }
+    else {
       throw new Error("Invalid move");
     }
   }
-  // Function to check if the card can be placed on the foundation pile
-  canPlaceOn(card: Card, pileIndex: number): boolean {
-    const pile = this.piles[pileIndex];
-    if (pile.isEmpty()) {
-      return card.rank === 1;
-    }
-    const topCard = pile.peek();
-    return topCard !== undefined && card.rank === topCard.rank + 1 &&
-      card.suit === topCard.suit;
+  pop(): Card | undefined {
+    return this.pile.pop();
+  }
+  peek(): Card | undefined {
+    return this.pile.peek();
+  }
+  isEmpty(): boolean {
+    return this.pile.isEmpty();
+  }
+  size(): number {
+    return this.pile.size();
+  }
+}
+export class Foundation {
+  piles: Pile[];
+
+  constructor() {
+    this.piles = [];
+    const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
+    suits.forEach((suit) => {
+      this.piles.push(new Pile(suit as Suit));
+    });
   }
 
-  removeCardFromPile(pileIndex: number): Card | undefined {
+  addCard(card: Card, pileIndex: number): void {
+    this.piles[pileIndex].push(card);
+  }
+
+  removeCard(pileIndex: number): Card | undefined {
     return this.piles[pileIndex].pop();
+  }
+
+  getTopCard(pileIndex: number): Card | undefined {
+    return this.piles[pileIndex].pile.peek();
+  }
+
+  isComplete(): boolean {
+    return this.piles.every((pile) => pile.pile.size === 13);
   }
 }

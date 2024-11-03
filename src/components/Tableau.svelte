@@ -48,7 +48,19 @@
         (event.currentTarget as HTMLElement).classList.remove("drag-over");
 
         const data = event.dataTransfer?.getData("application/json");
-        if (data) {
+        if (data && JSON.parse(data).foundationToTableau) {
+            const { pileIndex: foundationPileIndex } = JSON.parse(data);
+            try {
+                game?.moveCardFromFoundationToTableau(
+                    foundationPileIndex,
+                    targetPileIndex,
+                );
+                gameStore.set(game!);
+                draggedCardIndex = null;
+            } catch (error) {
+                console.error("Invalid move", error);
+            }
+        } else if (data) {
             const { pileIndex: fromPileIndex, cardIndex: fromCardIndex } =
                 JSON.parse(data);
             try {
@@ -124,11 +136,26 @@
     }
     .pile.drag-over {
         border: 2px dashed #000;
+        background-color: #e0e0e0;
     }
     .placeholder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 48px;
+        color: #555;
         width: 109px;
         height: 150px;
-        border: 1px dashed #ccc;
-        background-color: rgba(0, 0, 0, 0.05);
+        border: 2px dashed #bbb;
+        border-radius: 8px;
+        background-color: #f0f0f0;
+        transition:
+            background-color 0.3s,
+            border-color 0.3s;
+    }
+
+    .placeholder:hover {
+        background-color: #e0e0e0;
+        border-color: #999;
     }
 </style>

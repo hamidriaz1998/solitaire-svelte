@@ -26,7 +26,23 @@ export class Tableau {
 
   addCardToPile(card: Card, pileIndex: number) {
     if (pileIndex >= 0 && pileIndex < this.piles.length) {
-      this.piles[pileIndex].append(card);
+      // If the pile is empty, and the card is a King, add the card
+      if (this.piles[pileIndex].isEmpty() && card.rank === 13) {
+        this.piles[pileIndex].append(card);
+        return;
+      }
+      else {
+        const topCard = this.piles[pileIndex].getTail();
+        if (topCard) {
+          if (card.canPlaceOn(topCard)) {
+            this.piles[pileIndex].append(card);
+            return;
+          }
+          else {
+            throw new Error("Invalid move");
+          }
+        }
+      }
     } else {
       throw new Error("Invalid pile index");
     }
@@ -75,5 +91,3 @@ export class Tableau {
   }
 }
 
-// Ensure this method exists in LinkedList
-// removeAt is assumed to remove a card at a specific index

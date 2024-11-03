@@ -14,15 +14,13 @@
         unsubscribe();
     });
 
-    let draggedCardIndex: { pileIndex: number; cardIndex: number } | null =
-        null;
+    let draggedCardIndex: {
+        pileIndex: number;
+        foundationToTableau: boolean;
+    } | null = null;
 
-    function handleDragStart(
-        event: DragEvent,
-        pileIndex: number,
-        cardIndex: number,
-    ) {
-        draggedCardIndex = { pileIndex, cardIndex };
+    function handleDragStart(event: DragEvent, pileIndex: number) {
+        draggedCardIndex = { pileIndex, foundationToTableau: true };
         event.dataTransfer?.setData(
             "application/json",
             JSON.stringify(draggedCardIndex),
@@ -52,12 +50,12 @@
             const { pileIndex: fromPileIndex, cardIndex: fromCardIndex } =
                 JSON.parse(data);
             try {
-                game?.moveCardToFoundation(
+                game?.moveCardFromTableauToFoundation(
                     fromPileIndex,
                     fromCardIndex,
                     targetPileIndex,
                 );
-                gameStore.set(game);
+                gameStore.set(game!);
                 draggedCardIndex = null;
             } catch (error) {
                 console.error("Invalid move to foundation", error);
@@ -79,9 +77,26 @@
                 on:drop={(event) => handleDrop(event, i)}
             >
                 {#if pile.isEmpty()}
-                    <div class="placeholder"></div>
+                    <div class="placeholder">
+                        {#if pile.suit === "Hearts"}
+                            ♥️
+                        {:else if pile.suit === "Diamonds"}
+                            ♦️
+                        {:else if pile.suit === "Clubs"}
+                            ♣️
+                        {:else if pile.suit === "Spades"}
+                            ♠️
+                        {/if}
+                    </div>
                 {:else}
-                    <div class="card">
+                    <div
+                        class="card"
+                        draggable="true"
+                        on:dragstart={(event) => handleDragStart(event, i)}
+                        on:dragend={handleDragEnd}
+                        on:dragover={handleDragOver}
+                        on:dragleave={handleDragLeave}
+                    >
                         <Card card={pile.peek()} />
                     </div>
                 {/if}
@@ -94,7 +109,7 @@
     .foundation {
         display: flex;
         justify-content: center;
-        gap: 16px; /* Adjust gap between foundation piles */
+        gap: 16px;
     }
     .pile {
         position: relative;
@@ -104,25 +119,11 @@
     }
     .pile.drag-over {
         border: 2px dashed #000;
+        background-color: #e0e0e0;
     }
     .card {
         width: 109px;
         height: 150px;
-    }
-    .placeholder {
-        width: 109px;
-        height: 150px;
-        border: 2px dashed #ffd700;
-        background: linear-gradient(135deg, #e0eafc, #cfdef3);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .pile {
-        position: relative;
-        width: 109px;
-        min-height: 150px;
     }
     .card {
         position: absolute;
@@ -135,9 +136,23 @@
         transform: scale(1.1);
     }
     .placeholder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 48px;
+        color: #555;
         width: 109px;
         height: 150px;
-        border: 1px dashed #ccc;
-        background-color: rgba(0, 0, 0, 0.05);
+        border: 2px dashed #bbb;
+        border-radius: 8px;
+        background-color: #f0f0f0;
+        transition:
+            background-color 0.3s,
+            border-color 0.3s;
+    }
+
+    .placeholder:hover {
+        background-color: #e0e0e0;
+        border-color: #999;
     }
 </style>

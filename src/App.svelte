@@ -21,10 +21,9 @@
 <main>
   <div class="game-container">
     <div class="top-section">
-      <!-- Add other components like Stockpile or WastePile if you have them -->
-      <Foundation {game} />
+      <Foundation />
     </div>
-    <Tableau {game} />
+    <Tableau />
   </div>
 </main>
 
@@ -33,7 +32,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 40px; /* Space between Foundation and Tableau */
+    gap: 40px;
   }
   .top-section {
     display: flex;

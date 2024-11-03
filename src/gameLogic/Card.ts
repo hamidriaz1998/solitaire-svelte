@@ -9,7 +9,7 @@ export class Card {
   constructor(suit: Suit, rank: Rank, faceUp: boolean = false) {
     this.suit = suit;
     this.rank = rank;
-    this.faceUp = false;
+    this.faceUp = faceUp;
   }
 
   flip() {
