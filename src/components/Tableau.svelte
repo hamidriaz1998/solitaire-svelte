@@ -3,6 +3,7 @@
     import { gameStore } from "../stores/gameStore";
     import Card from "./Card.svelte";
     import type { Game } from "../gameLogic/Game.ts";
+    import { flip } from "svelte/animate";
 
     let game: Game | null = null;
 
@@ -110,19 +111,22 @@
                 {#if pile.isEmpty()}
                     <div class="placeholder"></div>
                 {:else}
-                    {#each pile.toArray() as card, j}
-                        <div
-                            role="listitem"
-                            class="card"
-                            style="top: {j * 30}px;"
-                            draggable="true"
-                            on:dragstart={(event) =>
-                                handleDragStart(event, i, j)}
-                            on:dragend={handleDragEnd}
-                        >
-                            <Card {card} />
-                        </div>
-                    {/each}
+                    <div class="cards-container">
+                        {#each pile.toArray() as card, j (card.id())}
+                            <div
+                                role="listitem"
+                                class="card"
+                                style="top: {j * 40}px;"
+                                draggable="true"
+                                animate:flip={{ delay: 1000 }}
+                                on:dragstart={(event) =>
+                                    handleDragStart(event, i, j)}
+                                on:dragend={handleDragEnd}
+                            >
+                                <Card {card} />
+                            </div>
+                        {/each}
+                    </div>
                 {/if}
             </div>
         {/each}
@@ -174,5 +178,8 @@
     .placeholder:hover {
         background-color: #e0e0e0;
         border-color: #999;
+    }
+    .cards-container {
+        position: relative;
     }
 </style>

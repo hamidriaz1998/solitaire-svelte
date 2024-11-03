@@ -32,13 +32,14 @@ export class Tableau {
         return;
       } else {
         const topCard = this.piles[pileIndex].getTail();
-        if (topCard) {
-          if (card.canPlaceOn(topCard)) {
-            this.piles[pileIndex].append(card);
-            return;
-          } else {
-            throw new Error("Invalid move");
-          }
+        if (!topCard) {
+          throw new Error("No card to place on");
+        }
+        if (card.canPlaceOn(topCard)) {
+          this.piles[pileIndex].append(card);
+          return;
+        } else {
+          throw new Error("Invalid move");
         }
       }
     } else {

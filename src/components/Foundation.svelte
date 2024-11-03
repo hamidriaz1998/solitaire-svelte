@@ -3,6 +3,7 @@
     import { gameStore } from "../stores/gameStore";
     import Card from "./Card.svelte";
     import type { Game } from "../gameLogic/Game.ts";
+    import { fly } from "svelte/transition";
 
     let game: Game | null = null;
 
@@ -110,6 +111,7 @@
                         on:dragend={handleDragEnd}
                         on:dragover={handleDragOver}
                         on:dragleave={handleDragLeave}
+                        transition:fly={{ y: -20, duration: 300 }}
                     >
                         <Card card={pile.peek()} />
                     </div>

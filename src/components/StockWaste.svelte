@@ -3,6 +3,7 @@
     import { gameStore } from "../stores/gameStore";
     import Card from "./Card.svelte";
     import type { Game } from "../gameLogic/Game.ts";
+    import { fly } from "svelte/transition";
 
     let game: Game | null = null;
 
@@ -53,6 +54,7 @@
                 role="list"
                 on:dragstart={(event) => handleDragStart(event)}
                 on:dragend={(event) => handleDragEnd(event)}
+                transition:fly={{ x: -200, duration: 500 }}
             >
                 <Card card={game.wastePile.getTopCard()} />
             </div>
