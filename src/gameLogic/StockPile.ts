@@ -6,7 +6,10 @@ export class Stockpile {
 
   constructor(cards: Card[]) {
     this.cards = new Queue<Card>();
-    cards.forEach((card) => this.addCardToStockpile(card));
+    cards.forEach((card) => {
+      card.flip();
+      this.addCardToStockpile(card);
+    });
   }
 
   drawCard(): Card | undefined {
@@ -16,4 +19,9 @@ export class Stockpile {
   addCardToStockpile(card: Card) {
     this.cards.enqueue(card);
   }
+
+  peek() {
+    return this.cards.peek();
+  }
+
 }

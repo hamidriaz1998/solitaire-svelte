@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import Tableau from "./components/Tableau.svelte";
   import Foundation from "./components/Foundation.svelte";
+  import StockWaste from "./components/StockWaste.svelte";
 
   let game: Game;
 
@@ -21,6 +22,7 @@
 <main>
   <div class="game-container">
     <div class="top-section">
+      <StockWaste />
       <Foundation />
     </div>
     <Tableau />
