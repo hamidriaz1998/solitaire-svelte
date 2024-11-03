@@ -23,5 +23,4 @@ export class Stockpile {
   peek() {
     return this.cards.peek();
   }
-
 }

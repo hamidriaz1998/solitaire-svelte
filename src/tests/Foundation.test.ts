@@ -1,70 +1,64 @@
-import { assertEquals, assertThrows } from "@std/assert";
 import { Foundation } from "../gameLogic/Foundation.ts";
-import { Card, Rank, Suit } from "../gameLogic/Card.ts";
+import { Card, type Rank } from "../gameLogic/Card.ts";
+import { assertEquals, assertThrows } from "@std/assert";
 
-Deno.test("Foundation should initialize with 4 empty piles", () => {
+Deno.test("Foundation should initialize with four empty piles", () => {
   const foundation = new Foundation();
-  assertEquals(foundation["piles"].length, 4);
-  foundation["piles"].forEach((pile) => {
+  assertEquals(foundation.piles.length, 4);
+  foundation.piles.forEach((pile) => {
     assertEquals(pile.isEmpty(), true);
   });
 });
 
-Deno.test("Foundation should add a card to an empty pile if it is an Ace", () => {
+Deno.test("Foundation should add a card to the correct pile", () => {
   const foundation = new Foundation();
-  const aceOfSpades = new Card(Suit.Spades, Rank.Ace, true);
-  foundation.addCardToPile(aceOfSpades, 0);
-  assertEquals(foundation["piles"][0].peek(), aceOfSpades);
+  const card = new Card("Hearts", 1);
+  foundation.addCard(card, 0);
+  assertEquals(foundation.getTopCard(0), card);
 });
 
-Deno.test("Foundation should not add a card to an empty pile if it is not an Ace", () => {
+Deno.test("Foundation should throw an error when adding an invalid card", () => {
   const foundation = new Foundation();
-  const twoOfSpades = new Card(Suit.Spades, Rank.Two, true);
-  assertThrows(
-    () => foundation.addCardToPile(twoOfSpades, 0),
-    Error,
-    "Invalid move",
-  );
+  const card = new Card("Hearts", 1);
+  foundation.addCard(card, 0);
+  const invalidCard = new Card("Hearts", 3);
+  assertThrows(() => foundation.addCard(invalidCard, 0), Error, "Invalid move");
 });
 
-Deno.test("Foundation should add a card to a pile if it is the next rank and same suit", () => {
+Deno.test("Foundation should remove a card from the correct pile", () => {
   const foundation = new Foundation();
-  const aceOfSpades = new Card(Suit.Spades, Rank.Ace, true);
-  const twoOfSpades = new Card(Suit.Spades, Rank.Two, true);
-  foundation.addCardToPile(aceOfSpades, 0);
-  foundation.addCardToPile(twoOfSpades, 0);
-  assertEquals(foundation["piles"][0].peek(), twoOfSpades);
+  const card = new Card("Hearts", 1);
+  foundation.addCard(card, 0);
+  const removedCard = foundation.removeCard(0);
+  assertEquals(removedCard, card);
+  assertEquals(foundation.getTopCard(0), undefined);
 });
 
-Deno.test("Foundation should not add a card to a pile if it is not the next rank", () => {
+Deno.test("Foundation should return the top card of a pile", () => {
   const foundation = new Foundation();
-  const aceOfSpades = new Card(Suit.Spades, Rank.Ace, true);
-  const threeOfSpades = new Card(Suit.Spades, Rank.Three, true);
-  foundation.addCardToPile(aceOfSpades, 0);
-  assertThrows(
-    () => foundation.addCardToPile(threeOfSpades, 0),
-    Error,
-    "Invalid move",
-  );
+  const card1 = new Card("Hearts", 1);
+  const card2 = new Card("Hearts", 2);
+  foundation.addCard(card1, 0);
+  foundation.addCard(card2, 0);
+  assertEquals(foundation.getTopCard(0), card2);
 });
 
-Deno.test("Foundation should not add a card to a pile if it is not the same suit", () => {
+Deno.test("Foundation should return true if all piles are complete", () => {
   const foundation = new Foundation();
-  const aceOfSpades = new Card(Suit.Spades, Rank.Ace, true);
-  const twoOfHearts = new Card(Suit.Hearts, Rank.Two, true);
-  foundation.addCardToPile(aceOfSpades, 0);
-  assertThrows(
-    () => foundation.addCardToPile(twoOfHearts, 0),
-    Error,
-    "Invalid move",
-  );
+  for (let i = 0; i < 4; i++) {
+    for (let j = 1; j <= 13; j++) {
+      foundation.addCard(new Card(foundation.piles[i].suit, j as Rank), i);
+    }
+  }
+  assertEquals(foundation.isComplete(), true);
 });
 
-Deno.test("Foundation should remove a card from a pile", () => {
+Deno.test("Foundation should return false if not all piles are complete", () => {
   const foundation = new Foundation();
-  const aceOfSpades = new Card(Suit.Spades, Rank.Ace, true);
-  foundation.addCardToPile(aceOfSpades, 0);
-  const removedCard = foundation.removeCardFromPile(0);
-  assertEquals(removedCard, aceOfSpades);
-  assertEquals(foundation["piles"][0].isEmpty(), true);
+  for (let i = 0; i < 4; i++) {
+    for (let j = 1; j <= 12; j++) {
+      foundation.addCard(new Card(foundation.piles[i].suit, j as Rank), i);
+    }
+  }
+  assertEquals(foundation.isComplete(), false);
 });

@@ -30,15 +30,13 @@ export class Tableau {
       if (this.piles[pileIndex].isEmpty() && card.rank === 13) {
         this.piles[pileIndex].append(card);
         return;
-      }
-      else {
+      } else {
         const topCard = this.piles[pileIndex].getTail();
         if (topCard) {
           if (card.canPlaceOn(topCard)) {
             this.piles[pileIndex].append(card);
             return;
-          }
-          else {
+          } else {
             throw new Error("Invalid move");
           }
         }
@@ -90,4 +88,3 @@ export class Tableau {
     }
   }
 }
-

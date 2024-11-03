@@ -15,11 +15,10 @@ class Pile {
       card.suit === this.suit &&
       (this.pile.isEmpty() && card.rank === 1 ||
         !this.pile.isEmpty() && this.pile.peek() &&
-        card.rank === this.pile.peek()!.rank + 1)
+          card.rank === this.pile.peek()!.rank + 1)
     ) {
       this.pile.push(card);
-    }
-    else {
+    } else {
       throw new Error("Invalid move");
     }
   }

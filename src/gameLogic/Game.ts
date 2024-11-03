@@ -13,17 +13,13 @@ export class Game {
   wastePile: WastePile;
 
   constructor() {
-    // Initialize and shuffle the deck
     this.deck = new Deck();
     this.deck.shuffle();
 
-    // Initialize the tableau with cards from the deck
     this.tableau = new Tableau(this.deck);
 
-    // Initialize the foundation
     this.foundation = new Foundation();
 
-    // Initialize the stockpile with remaining cards
     const remainingCards: Card[] = [];
     let card = this.deck.draw();
     while (card) {
@@ -32,7 +28,6 @@ export class Game {
     }
     this.stockpile = new Stockpile(remainingCards);
 
-    // Initialize the waste pile
     this.wastePile = new WastePile();
   }
 
@@ -53,7 +48,6 @@ export class Game {
     }
   }
 
-  // Method to move cards between tableau piles
   moveCardBetweenTableauPiles(
     fromPile: number,
     toPile: number,
@@ -65,7 +59,6 @@ export class Game {
   moveCardFromWasteToTableau(tableauIndex: number) {
     const card = this.wastePile.getTopCard();
     if (card) {
-      // Attempt to add the card to the tableau
       try {
         this.tableau.addCardToPile(card, tableauIndex);
         this.wastePile.removeCard();
@@ -90,8 +83,6 @@ export class Game {
       }
       this.foundation.addCard(card, targetPileIndex);
       fromPile.removeAt(cardIndex);
-      // Attempt to add to foundation
-      // Flip the next card in Tableau if necessary
       const newTail = fromPile.getTail();
       if (newTail && !newTail.faceUp) {
         newTail.flip();
