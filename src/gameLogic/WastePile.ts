@@ -2,7 +2,7 @@ import { Card } from "./Card.ts";
 import Stack from "../DataStructures/Stack.ts";
 
 export default class WastePile {
-  private pile: Stack<Card>;
+  pile: Stack<Card>;
 
   constructor() {
     this.pile = new Stack<Card>();

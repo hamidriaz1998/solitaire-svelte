@@ -1,64 +1,110 @@
 <script lang="ts">
+    import { onDestroy } from "svelte";
     import { gameStore } from "../stores/gameStore";
-    import type { Game } from "../gameLogic/Game.ts";
     import Card from "./Card.svelte";
+    import type { Game } from "../gameLogic/Game.ts";
 
-    let game: Game;
+    let game: Game | null = null;
 
     const unsubscribe = gameStore.subscribe((value) => {
         game = value;
     });
 
+    onDestroy(() => {
+        unsubscribe();
+    });
+
     function handleStockClick() {
-        game.drawFromStockpile();
-        gameStore.set(game);
+        game?.drawFromStockpile();
+        gameStore.set(game!);
     }
 
-    $: stockEmpty = game.stockpile.cards.isEmpty();
+    // function handleDragStart(event: DragEvent, card: any) {
+    //     const dragData = {
+    //         source: "waste",
+    //         cardIndex: game?.wastePile.pile.size - 1,
+    //     };
+    //     event.dataTransfer?.setData(
+    //         "application/json",
+    //         JSON.stringify(dragData),
+    //     );
+    //     (event.currentTarget as HTMLElement).classList.add("dragging");
+    // }
+
+    // function handleDragEnd(event: DragEvent) {
+    //     (event.currentTarget as HTMLElement).classList.remove("dragging");
+    // }
 </script>
 
-<div class="stock-waste-container">
-    <button
-        class="stockpile {stockEmpty ? 'empty' : ''}"
-        on:click={handleStockClick}
-        aria-label="Stockpile"
-    >
-        {#if stockEmpty}
-            <span>Stockpile Empty</span>
-        {:else}
+<div class="stock-waste">
+    <button class="stock" on:click={handleStockClick}>
+        {#if game && !game.stockpile.isEmpty()}
             <div class="card">
-                <Card card={game.stockpile.peek()} />
+                <Card card={game.stockpile?.peek()} />
             </div>
+        {:else}
+            <div class="placeholder">Empty Stock</div>
         {/if}
     </button>
-    <div class="wastepile"></div>
+    <div class="waste">
+        {#if game && !game.wastePile.pile.isEmpty()}
+            <div class="card" draggable="true" role="list">
+                <Card card={game.wastePile.getTopCard()} />
+            </div>
+        {:else}
+            <div class="placeholder">Empty Waste</div>
+        {/if}
+    </div>
 </div>
 
 <style>
-    .stock-waste-container {
+    .stock-waste {
         display: flex;
         gap: 16px;
+        justify-content: center;
+        align-items: center;
     }
-    .stockpile {
+    .stock,
+    .waste {
+        position: relative;
         width: 109px;
         height: 150px;
-        border: 2px solid #000;
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        background-color: #f0f0f0;
     }
-    .stockpile.empty {
-        background-color: #ddd;
+    .stock .card.back {
+        background-image: url("/Cards/card_back.png");
     }
-    .wastepile {
+    .waste .card {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
+    .card.dragging {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+    .placeholder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+        color: #555;
         width: 109px;
         height: 150px;
-        border: 2px solid #000;
+        border: 2px dashed #bbb;
         border-radius: 8px;
-        background-color: #fff;
-        position: relative;
+        background-color: #f0f0f0;
+        transition:
+            background-color 0.3s,
+            border-color 0.3s;
+    }
+
+    .placeholder:hover {
+        background-color: #e0e0e0;
+        border-color: #999;
     }
 </style>

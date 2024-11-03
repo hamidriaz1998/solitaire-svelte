@@ -39,6 +39,6 @@
   .top-section {
     display: flex;
     justify-content: center;
-    gap: 32px;
+    gap: 240px;
   }
 </style>

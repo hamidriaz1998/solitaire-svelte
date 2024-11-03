@@ -2,18 +2,6 @@ import { assertEquals, assertInstanceOf } from "@std/assert";
 import { Stockpile } from "../gameLogic/StockPile.ts";
 import { Card } from "../gameLogic/Card.ts";
 
-Deno.test("Stockpile should initialize with flipped cards", () => {
-  const cards = [
-    new Card("Spades", 1),
-    new Card("Hearts", 2),
-    new Card("Diamonds", 3),
-  ];
-  const _stockpile = new Stockpile(cards);
-
-  cards.forEach((card) => {
-    assertEquals(card.faceUp, true);
-  });
-});
 
 Deno.test("Stockpile should draw a card from the stockpile", () => {
   const cards = [

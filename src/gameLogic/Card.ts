@@ -27,4 +27,7 @@ export class Card {
   canPlaceOn(card: Card): boolean {
     return this.rank === card.rank - 1 && this.isOppositeColor(card);
   }
+  id(): string {
+    return `${this.rank}-${this.suit}`;
+  }
 }

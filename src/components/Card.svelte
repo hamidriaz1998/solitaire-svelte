@@ -1,12 +1,12 @@
 <script lang="ts">
   import { Card } from "../gameLogic/Card";
-  export let card: Card;
+  export let card: Card | undefined;
 </script>
 
 <div
-  class="card {card.faceUp ? 'face-up' : 'face-down'}"
-  style="background-image: {card.faceUp
-    ? `url('/Cards/${card.suit}/${card.rank}.png')`
+  class="card {card?.faceUp ? 'face-up' : 'face-down'}"
+  style="background-image: {card?.faceUp
+    ? `url('/Cards/${card?.suit}/${card?.rank}.png')`
     : `url('/Cards/card_back.png')`}"
 ></div>
 
