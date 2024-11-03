@@ -117,4 +117,19 @@ export class Game {
       throw new Error("No card to move from foundation");
     }
   }
+  moveCardWasteToFoundation(foundationPileIndex: number) {
+    const card = this.wastePile.getTopCard();
+    if (card) {
+      try {
+        this.foundation.addCard(card, foundationPileIndex);
+        this.wastePile.removeCard();
+      } catch (_error) {
+        throw new Error("Invalid move from waste to foundation");
+      }
+    } else {
+      throw new Error("No card to move from waste to foundation");
+    }
+  }
+
+
 }

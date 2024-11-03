@@ -19,21 +19,20 @@
         gameStore.set(game!);
     }
 
-    // function handleDragStart(event: DragEvent, card: any) {
-    //     const dragData = {
-    //         source: "waste",
-    //         cardIndex: game?.wastePile.pile.size - 1,
-    //     };
-    //     event.dataTransfer?.setData(
-    //         "application/json",
-    //         JSON.stringify(dragData),
-    //     );
-    //     (event.currentTarget as HTMLElement).classList.add("dragging");
-    // }
+    function handleDragStart(event: DragEvent) {
+        const dragData = {
+            source: "waste",
+        };
+        event.dataTransfer?.setData(
+            "application/json",
+            JSON.stringify(dragData),
+        );
+        (event.currentTarget as HTMLElement).classList.add("dragging");
+    }
 
-    // function handleDragEnd(event: DragEvent) {
-    //     (event.currentTarget as HTMLElement).classList.remove("dragging");
-    // }
+    function handleDragEnd(event: DragEvent) {
+        (event.currentTarget as HTMLElement).classList.remove("dragging");
+    }
 </script>
 
 <div class="stock-waste">
@@ -48,7 +47,13 @@
     </button>
     <div class="waste">
         {#if game && !game.wastePile.pile.isEmpty()}
-            <div class="card" draggable="true" role="list">
+            <div
+                class="card"
+                draggable="true"
+                role="list"
+                on:dragstart={(event) => handleDragStart(event)}
+                on:dragend={(event) => handleDragEnd(event)}
+            >
                 <Card card={game.wastePile.getTopCard()} />
             </div>
         {:else}

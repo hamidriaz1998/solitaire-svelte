@@ -14,15 +14,18 @@
         unsubscribe();
     });
 
-    let draggedCardIndex: { pileIndex: number; cardIndex: number } | null =
-        null;
+    let draggedCardIndex: {
+        pileIndex: number;
+        cardIndex: number;
+        source: string;
+    } | null = null;
 
     function handleDragStart(
         event: DragEvent,
         pileIndex: number,
         cardIndex: number,
     ) {
-        draggedCardIndex = { pileIndex, cardIndex };
+        draggedCardIndex = { pileIndex, cardIndex, source: "tableau" };
         event.dataTransfer?.setData(
             "application/json",
             JSON.stringify(draggedCardIndex),
@@ -47,9 +50,18 @@
         event.preventDefault();
         (event.currentTarget as HTMLElement).classList.remove("drag-over");
 
-        const data = event.dataTransfer?.getData("application/json");
-        if (data && JSON.parse(data).foundationToTableau) {
-            const { pileIndex: foundationPileIndex } = JSON.parse(data);
+        const json = event.dataTransfer?.getData("application/json");
+        if (!json) {
+            console.error("No data found in drop event");
+            return;
+        }
+        const data = JSON.parse(json);
+        if (!data?.source) {
+            console.error("Invalid data found in drop event", data);
+            return;
+        }
+        if (data.source === "foundation") {
+            const { pileIndex: foundationPileIndex } = data;
             try {
                 game?.moveCardFromFoundationToTableau(
                     foundationPileIndex,
@@ -60,9 +72,8 @@
             } catch (error) {
                 console.error("Invalid move", error);
             }
-        } else if (data) {
-            const { pileIndex: fromPileIndex, cardIndex: fromCardIndex } =
-                JSON.parse(data);
+        } else if (data.source === "tableau") {
+            const { pileIndex: fromPileIndex, cardIndex: fromCardIndex } = data;
             try {
                 game?.moveCardBetweenTableauPiles(
                     fromPileIndex,
@@ -74,8 +85,14 @@
             } catch (error) {
                 console.error("Invalid move", error);
             }
-        } else {
-            console.log("No drag data found.");
+        } else if (data.source === "waste") {
+            try {
+                game?.moveCardFromWasteToTableau(targetPileIndex);
+                gameStore.set(game!);
+                draggedCardIndex = null;
+            } catch (error) {
+                console.error("Invalid move", error);
+            }
         }
     }
 </script>
