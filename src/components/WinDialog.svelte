@@ -1,11 +1,20 @@
 <script lang="ts">
   import { fade, scale } from "svelte/transition";
   import { gameStore } from "../stores/gameStore";
+  import { timer } from "../stores/timerStore";
   import { Game } from "../gameLogic/Game";
   export let visible = false;
 
+  let finalTime: string;
+
+  timer.subscribe((state) => {
+    finalTime = state.formattedTime;
+  });
+
   function newGame() {
+    timer.reset();
     gameStore.set(new Game());
+    timer.start();
     visible = false;
   }
 </script>
@@ -22,7 +31,8 @@
       <h2 class="text-4xl mb-4 text-gray-800 drop-shadow-sm">
         🎉 Congratulations!
       </h2>
-      <p class="text-xl text-gray-600 mb-8">You've won the game!</p>
+      <p class="text-xl text-gray-600 mb-2">You've won the game!</p>
+      <p class="text-lg text-gray-500 mb-8">Final Time: {finalTime}</p>
       <button
         class="bg-gradient-to-br from-green-400 to-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg uppercase tracking-wider transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-400/30"
         on:click={newGame}

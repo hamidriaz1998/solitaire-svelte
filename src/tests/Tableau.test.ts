@@ -33,7 +33,7 @@ Deno.test("Tableau should add a King to an empty pile", () => {
   const deck = new Deck();
   deck.shuffle();
   const tableau = new Tableau(deck);
-  tableau.piles[0].deleteTail();
+  tableau.piles[0].removeAt(tableau.piles[0].size - 1);
   const kingCard = new Card("Hearts", 13);
   tableau.addCardToPile(kingCard, 0);
   assertEquals(tableau.piles[0].getTail(), kingCard);

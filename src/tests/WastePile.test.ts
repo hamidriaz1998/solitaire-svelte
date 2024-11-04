@@ -1,8 +1,5 @@
-import {
-  assertEquals,
-  assertStrictEquals,
-} from "@std/assert";
-import WastePile from '../gameLogic/WastePile.ts';
+import { assertEquals, assertStrictEquals } from "@std/assert";
+import WastePile from "../gameLogic/WastePile.ts";
 import { Card } from "../gameLogic/Card.ts";
 
 Deno.test("WastePile should add a card to the waste pile", () => {

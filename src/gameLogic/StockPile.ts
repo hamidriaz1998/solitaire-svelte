@@ -7,8 +7,9 @@ export class Stockpile {
   constructor(cards: Card[]) {
     this.cards = new Queue<Card>();
     cards.forEach((card) => {
-      if (card.faceUp)
+      if (card.faceUp) {
         card.flip();
+      }
       this.addCardToStockpile(card);
     });
   }

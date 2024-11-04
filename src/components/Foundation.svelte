@@ -5,6 +5,7 @@
   import type { Game } from "../gameLogic/Game.ts";
   import { fly, scale } from "svelte/transition";
   import { elasticOut } from "svelte/easing";
+  import { timer } from "../stores/timerStore";
 
   let game: Game | null = null;
 
@@ -84,6 +85,12 @@
   function getRandomRotation() {
     return Math.random() * 10 - 5; // Random rotation between -5 and 5 degrees
   }
+
+  let isDraggable: boolean;
+
+  timer.subscribe((state) => {
+    isDraggable = state.isDraggable;
+  });
 </script>
 
 <div class="flex justify-center gap-4">
@@ -117,8 +124,8 @@
         {:else}
           <div
             class="absolute w-[109px] h-[150px] transition-all duration-300 origin-center hover:-translate-y-1 hover:scale-102 hover:shadow-lg hover:z-10"
-            draggable="true"
-            on:dragstart={(event) => handleDragStart(event, i)}
+            draggable={isDraggable}
+            on:dragstart={(event) => isDraggable && handleDragStart(event, i)}
             on:dragend={handleDragEnd}
             on:dragover={handleDragOver}
             on:dragleave={handleDragLeave}

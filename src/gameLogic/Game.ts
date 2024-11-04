@@ -130,6 +130,4 @@ export class Game {
       throw new Error("No card to move from waste to foundation");
     }
   }
-
-
 }

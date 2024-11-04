@@ -5,6 +5,7 @@
   import type { Game } from "../gameLogic/Game.ts";
   import { fly, scale } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
+  import { timer } from "../stores/timerStore";
 
   let game: Game | null = null;
 
@@ -32,12 +33,19 @@
   function handleDragEnd(event: DragEvent) {
     (event.currentTarget as HTMLElement).classList.remove("dragging");
   }
+
+  let isDraggable: boolean;
+
+  timer.subscribe((state) => {
+    isDraggable = state.isDraggable;
+  });
 </script>
 
 <div class="flex gap-4 justify-center items-center">
   <button
     class="relative w-[109px] h-[150px] rounded-lg flex items-center justify-center cursor-pointer group"
     on:click={handleStockClick}
+    disabled={!isDraggable}
   >
     {#if game && !game.stockpile.isEmpty()}
       <div
@@ -67,9 +75,9 @@
     {#if game && !game.wastePile.pile.isEmpty()}
       <div
         class="absolute w-full h-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:z-10"
-        draggable="true"
+        draggable={isDraggable}
         role="list"
-        on:dragstart={(event) => handleDragStart(event)}
+        on:dragstart={(event) => isDraggable && handleDragStart(event)}
         on:dragend={(event) => handleDragEnd(event)}
         in:fly={{
           x: -200,

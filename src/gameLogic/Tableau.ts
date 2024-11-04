@@ -70,8 +70,9 @@ export class Tableau {
       if (fromCard.canPlaceOn(toCard)) {
         // Append the moving cards to the destination pile
         toPileList.concat(movingCards);
-        if (!fromPileList.getTail()?.faceUp)
+        if (!fromPileList.getTail()?.faceUp) {
           fromPileList.getTail()?.flip();
+        }
       } else {
         // Move cards back to the source pile
         fromPileList.concat(movingCards);
@@ -81,8 +82,9 @@ export class Tableau {
       // Handle the case where the destination pile is empty
       if (fromCard.rank === 13) {
         toPileList.concat(movingCards);
-        if (!fromPileList.getTail()?.faceUp)
+        if (!fromPileList.getTail()?.faceUp) {
           fromPileList.getTail()?.flip();
+        }
       } else {
         // Move cards back to the source pile
         fromPileList.concat(movingCards);

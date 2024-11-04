@@ -5,6 +5,7 @@
   import type { Game } from "../gameLogic/Game.ts";
   import { fly, scale } from "svelte/transition";
   import { elasticOut } from "svelte/easing";
+  import { timer } from "../stores/timerStore";
 
   let game: Game | null = null;
 
@@ -101,6 +102,12 @@
   function getCardDelay(index: number) {
     return index * 50; // Cascading delay for cards
   }
+
+  let isDraggable: boolean;
+
+  timer.subscribe((state) => {
+    isDraggable = state.isDraggable;
+  });
 </script>
 
 <div class="tableau">
@@ -129,14 +136,15 @@
                 role="listitem"
                 class="card"
                 style="top: {j * 40}px;"
-                draggable="true"
+                draggable={isDraggable && card.faceUp}
                 in:fly={{
                   y: -50,
                   duration: 400,
                   delay: getCardDelay(j),
                   easing: elasticOut,
                 }}
-                on:dragstart={(event) => handleDragStart(event, i, j)}
+                on:dragstart={(event) =>
+                  isDraggable && card.faceUp && handleDragStart(event, i, j)}
                 on:dragend={handleDragEnd}
               >
                 <Card {card} />

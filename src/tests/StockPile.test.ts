@@ -2,7 +2,6 @@ import { assertEquals, assertInstanceOf } from "@std/assert";
 import { Stockpile } from "../gameLogic/StockPile.ts";
 import { Card } from "../gameLogic/Card.ts";
 
-
 Deno.test("Stockpile should draw a card from the stockpile", () => {
   const cards = [
     new Card("Spades", 1),
