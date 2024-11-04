@@ -4,6 +4,7 @@ import { Foundation } from "./Foundation.ts";
 import { Stockpile } from "./StockPile.ts";
 import WastePile from "./WastePile.ts";
 import { Card } from "./Card.ts";
+import { scoreStore, SCORE_RULES } from "../stores/scoreStore.ts";
 
 export class Game {
   deck: Deck;
@@ -32,11 +33,12 @@ export class Game {
   }
 
   drawFromStockpile() {
+    const wasEmpty = this.stockpile.isEmpty();
     const card = this.stockpile.drawCard();
     if (card) {
       card.flip();
       this.wastePile.addCard(card);
-    } else {
+    } else if (wasEmpty) {
       // Reset the stockpile from the waste pile
       while (this.wastePile.getTopCard()) {
         const wasteCard = this.wastePile.removeCard();
@@ -45,6 +47,7 @@ export class Game {
           this.stockpile.addCardToStockpile(wasteCard);
         }
       }
+      scoreStore.addPoints(SCORE_RULES.RECYCLE_WASTE);
     }
   }
 
@@ -62,6 +65,7 @@ export class Game {
       try {
         this.tableau.addCardToPile(card, tableauIndex);
         this.wastePile.removeCard();
+        scoreStore.addPoints(SCORE_RULES.WASTE_TO_TABLEAU);
       } catch (_error) {
         throw new Error("Invalid move");
       }
@@ -74,7 +78,6 @@ export class Game {
     targetPileIndex: number,
   ) {
     let card: Card | undefined;
-
     if (fromPileIndex < this.tableau.piles.length) {
       const fromPile = this.tableau.piles[fromPileIndex];
       card = fromPile.getAt(cardIndex);
@@ -86,20 +89,12 @@ export class Game {
       const newTail = fromPile.getTail();
       if (newTail && !newTail.faceUp) {
         newTail.flip();
+        scoreStore.addPoints(SCORE_RULES.TURN_OVER_TABLEAU_CARD);
       }
-    } else {
-      const wasteCard = this.wastePile.getTopCard();
-      if (!wasteCard) {
-        throw new Error("No card to move from WastePile");
-      }
-      this.foundation.addCard(wasteCard, targetPileIndex);
-      this.wastePile.removeCard();
+      scoreStore.addPoints(SCORE_RULES.TABLEAU_TO_FOUNDATION);
     }
   }
 
-  isGameWon(): boolean {
-    return this.foundation.piles.every((pile) => pile.size() === 13);
-  }
   moveCardFromFoundationToTableau(
     foundationPileIndex: number,
     tableauPileIndex: number,
@@ -109,25 +104,28 @@ export class Game {
     if (card) {
       try {
         this.tableau.addCardToPile(card, tableauPileIndex);
+        scoreStore.addPoints(SCORE_RULES.FOUNDATION_TO_TABLEAU);
       } catch (_error) {
         foundationPile.push(card);
         throw new Error("Invalid move from foundation to tableau");
       }
-    } else {
-      throw new Error("No card to move from foundation");
     }
   }
+
   moveCardWasteToFoundation(foundationPileIndex: number) {
     const card = this.wastePile.getTopCard();
     if (card) {
       try {
         this.foundation.addCard(card, foundationPileIndex);
         this.wastePile.removeCard();
+        scoreStore.addPoints(SCORE_RULES.WASTE_TO_FOUNDATION);
       } catch (_error) {
         throw new Error("Invalid move from waste to foundation");
       }
-    } else {
-      throw new Error("No card to move from waste to foundation");
     }
+  }
+
+  isGameWon(): boolean {
+    return this.foundation.piles.every((pile) => pile.size() === 13);
   }
 }

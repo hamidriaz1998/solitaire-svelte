@@ -3,6 +3,7 @@
   import { gameStore } from "../stores/gameStore";
   import { timer } from "../stores/timerStore";
   import { Game } from "../gameLogic/Game";
+  import { scoreStore } from "../stores/scoreStore";
   export let visible = false;
 
   let finalTime: string;
@@ -13,6 +14,7 @@
 
   function newGame() {
     timer.reset();
+    scoreStore.reset();
     gameStore.set(new Game());
     timer.start();
     visible = false;

@@ -1,19 +1,28 @@
 <script lang="ts">
   import { gameStore } from "../stores/gameStore";
   import { timer } from "../stores/timerStore";
+  import { scoreStore } from "../stores/scoreStore";
   import { fade } from "svelte/transition";
   import { Game } from "../gameLogic/Game";
 
   let formattedTime: string;
   let isRunning: boolean;
+  let score: number;
+  let lastMove: number;
 
   timer.subscribe((state) => {
     formattedTime = state.formattedTime;
     isRunning = state.isRunning;
   });
 
+  scoreStore.subscribe((state) => {
+    score = state.score;
+    lastMove = state.lastMove;
+  });
+
   function newGame() {
     timer.reset();
+    scoreStore.reset();
     gameStore.set(new Game());
     timer.start();
   }
@@ -37,6 +46,20 @@
     Solitaire
   </h1>
   <div class="flex items-center gap-8">
+    <div class="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
+      <span class="text-lg font-semibold text-gray-700">Score:</span>
+      <span class="text-xl font-mono text-gray-900">{score}</span>
+      {#if lastMove !== 0}
+        <span
+          class="text-sm font-mono ml-2 {lastMove > 0
+            ? 'text-green-600'
+            : 'text-red-600'}"
+          in:fade
+        >
+          ({lastMove > 0 ? "+" : ""}{lastMove})
+        </span>
+      {/if}
+    </div>
     <div class="flex items-center gap-2">
       <span class="text-2xl font-mono text-gray-700">{formattedTime}</span>
       <button
