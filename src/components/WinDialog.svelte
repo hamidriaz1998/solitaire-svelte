@@ -7,9 +7,14 @@
   export let visible = false;
 
   let finalTime: string;
+  let finalScore: number;
 
   timer.subscribe((state) => {
     finalTime = state.formattedTime;
+  });
+
+  scoreStore.subscribe((state) => {
+    finalScore = state.score;
   });
 
   function newGame() {
@@ -34,7 +39,10 @@
         🎉 Congratulations!
       </h2>
       <p class="text-xl text-gray-600 mb-2">You've won the game!</p>
-      <p class="text-lg text-gray-500 mb-8">Final Time: {finalTime}</p>
+      <div class="space-y-2 mb-8">
+        <p class="text-lg text-gray-500">Final Time: {finalTime}</p>
+        <p class="text-lg text-gray-500">Final Score: {finalScore}</p>
+      </div>
       <button
         class="bg-gradient-to-br from-green-400 to-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg uppercase tracking-wider transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-400/30"
         on:click={newGame}
