@@ -86,18 +86,18 @@
   }
 </script>
 
-<div class="foundation">
+<div class="flex justify-center gap-4">
   {#if game}
     {#each game.foundation.piles as pile, i}
       <div
-        class="pile"
+        class="relative w-[109px] h-[150px] border border-transparent hover:border-2 hover:border-dashed hover:border-black hover:bg-gray-200"
         on:dragover={handleDragOver}
         on:dragleave={handleDragLeave}
         on:drop={(event) => handleDrop(event, i)}
       >
         {#if pile.isEmpty()}
           <div
-            class="placeholder"
+            class="flex justify-center items-center text-5xl text-gray-600 w-[109px] h-[150px] border-2 border-dashed border-gray-400 rounded-lg bg-gray-100 transition-all duration-300 hover:bg-gray-200 hover:border-gray-600"
             in:scale={{
               duration: 200,
               easing: elasticOut,
@@ -116,7 +116,7 @@
           </div>
         {:else}
           <div
-            class="card"
+            class="absolute w-[109px] h-[150px] transition-all duration-300 origin-center hover:-translate-y-1 hover:scale-102 hover:shadow-lg hover:z-10"
             draggable="true"
             on:dragstart={(event) => handleDragStart(event, i)}
             on:dragend={handleDragEnd}
@@ -137,62 +137,3 @@
     {/each}
   {/if}
 </div>
-
-<style>
-  .foundation {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-  }
-  .pile {
-    position: relative;
-    width: 109px;
-    height: 150px;
-    border: 1px solid transparent;
-  }
-  .pile.drag-over {
-    border: 2px dashed #000;
-    background-color: #e0e0e0;
-  }
-  .card {
-    width: 109px;
-    height: 150px;
-  }
-  .card {
-    position: absolute;
-    width: 109px;
-    height: 150px;
-    transition: all 0.3s ease;
-    transform-origin: center center;
-  }
-  .card.dragging {
-    opacity: 0.5;
-    transform: scale(1.1);
-  }
-  .placeholder {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 48px;
-    color: #555;
-    width: 109px;
-    height: 150px;
-    border: 2px dashed #bbb;
-    border-radius: 8px;
-    background-color: #f0f0f0;
-    transition:
-      background-color 0.3s,
-      border-color 0.3s;
-  }
-
-  .placeholder:hover {
-    background-color: #e0e0e0;
-    border-color: #999;
-  }
-
-  .card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-  }
-</style>
