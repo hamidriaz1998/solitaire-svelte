@@ -15,7 +15,7 @@ class Pile {
       card.suit === this.suit &&
       (this.pile.isEmpty() && card.rank === 1 ||
         !this.pile.isEmpty() && this.pile.peek() &&
-          card.rank === this.pile.peek()!.rank + 1)
+        card.rank === this.pile.peek()!.rank + 1)
     ) {
       this.pile.push(card);
     } else {
@@ -33,6 +33,11 @@ class Pile {
   }
   size(): number {
     return this.pile.size();
+  }
+  clone(): Pile {
+    const newPile = new Pile(this.suit);
+    newPile.pile = this.pile.clone();
+    return newPile;
   }
 }
 export class Foundation {
@@ -60,5 +65,11 @@ export class Foundation {
 
   isComplete(): boolean {
     return this.piles.every((pile) => pile.pile.size() === 13);
+  }
+
+  clone(): Foundation {
+    const foundation = new Foundation();
+    foundation.piles = this.piles.map((pile) => pile.clone());
+    return foundation;
   }
 }

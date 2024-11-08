@@ -7,29 +7,38 @@ import { Card } from "./Card.ts";
 import { SCORE_RULES, scoreStore } from "../stores/scoreStore.ts";
 
 export class Game {
-  deck: Deck;
   tableau: Tableau;
   foundation: Foundation;
   stockpile: Stockpile;
   wastePile: WastePile;
 
-  constructor() {
-    this.deck = new Deck();
-    this.deck.shuffle();
+  constructor(game?: Game) {
+    if (game) {
+      this.tableau = game.tableau.clone();
+      this.foundation = game.foundation.clone();
+      this.stockpile = game.stockpile.clone();
+      this.wastePile = game.wastePile.clone();
+    } else {
+      const deck = new Deck();
+      deck.shuffle();
 
-    this.tableau = new Tableau(this.deck);
+      this.tableau = new Tableau(deck);
 
-    this.foundation = new Foundation();
+      this.foundation = new Foundation();
 
-    const remainingCards: Card[] = [];
-    let card = this.deck.draw();
-    while (card) {
-      remainingCards.push(card);
-      card = this.deck.draw();
+      const remainingCards: Card[] = [];
+      let card = deck.draw();
+      while (card) {
+        remainingCards.push(card);
+        card = deck.draw();
+      }
+      this.stockpile = new Stockpile(remainingCards);
+
+      this.wastePile = new WastePile();
     }
-    this.stockpile = new Stockpile(remainingCards);
-
-    this.wastePile = new WastePile();
+  }
+  clone(): Game {
+    return new Game(this);
   }
 
   drawFromStockpile() {
@@ -59,7 +68,6 @@ export class Game {
     cardIndex: number,
   ) {
     this.tableau.moveCardBetweenPiles(fromPile, toPile, cardIndex);
-    scoreStore.incrementMoves();
   }
 
   moveCardFromWasteToTableau(tableauIndex: number) {
@@ -69,7 +77,6 @@ export class Game {
         this.tableau.addCardToPile(card, tableauIndex);
         this.wastePile.removeCard();
         scoreStore.addPoints(SCORE_RULES.WASTE_TO_TABLEAU);
-        scoreStore.incrementMoves();
       } catch (_error) {
         throw new Error("Invalid move");
       }
@@ -96,7 +103,6 @@ export class Game {
         scoreStore.addPoints(SCORE_RULES.TURN_OVER_TABLEAU_CARD);
       }
       scoreStore.addPoints(SCORE_RULES.TABLEAU_TO_FOUNDATION);
-      scoreStore.incrementMoves();
     }
   }
 
@@ -110,7 +116,6 @@ export class Game {
       try {
         this.tableau.addCardToPile(card, tableauPileIndex);
         scoreStore.addPoints(SCORE_RULES.FOUNDATION_TO_TABLEAU);
-        scoreStore.incrementMoves();
       } catch (_error) {
         foundationPile.push(card);
         throw new Error("Invalid move from foundation to tableau");
@@ -125,7 +130,6 @@ export class Game {
         this.foundation.addCard(card, foundationPileIndex);
         this.wastePile.removeCard();
         scoreStore.addPoints(SCORE_RULES.WASTE_TO_FOUNDATION);
-        scoreStore.incrementMoves();
       } catch (_error) {
         throw new Error("Invalid move from waste to foundation");
       }

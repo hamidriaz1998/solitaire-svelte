@@ -156,4 +156,13 @@ export default class LinkedList<T> {
     }
     this.count--;
   }
+  clone(): LinkedList<T> {
+    const newList = new LinkedList<T>();
+    let current = this.head;
+    while (current) {
+      newList.append(current.data);
+      current = current.next;
+    }
+    return newList;
+  }
 }

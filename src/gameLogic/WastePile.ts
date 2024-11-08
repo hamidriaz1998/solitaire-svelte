@@ -16,4 +16,9 @@ export default class WastePile {
   getTopCard(): Card | undefined {
     return this.pile.peek();
   }
+  clone(): WastePile {
+    const wastePile = new WastePile();
+    wastePile.pile = this.pile.clone();
+    return wastePile;
+  }
 }

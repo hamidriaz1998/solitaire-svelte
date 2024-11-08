@@ -1,30 +1,52 @@
+import LinkedList from "./LinkedList.ts";
+
 export default class Stack<T> {
-  private items: T[];
+  private items: LinkedList<T>;
+
   constructor() {
-    this.items = [];
+    this.items = new LinkedList<T>();
   }
+
   push(item: T) {
-    this.items.push(item);
+    this.items.append(item);
   }
+
   pop(): T | undefined {
-    return this.items.pop();
+    if (this.isEmpty()) {
+      return undefined;
+    }
+    const value = this.items.getTail();
+    this.items.removeAt(this.items.size - 1);
+    return value || undefined;
   }
+
   peek(): T | undefined {
-    return this.items[this.items.length - 1];
+    return this.items.getTail() || undefined;
   }
+
   isEmpty(): boolean {
-    return this.items.length === 0;
+    return this.items.isEmpty();
   }
+
   size(): number {
-    return this.items.length;
+    return this.items.size;
   }
+
   clear() {
-    this.items = [];
+    this.items = new LinkedList<T>();
   }
+
   print() {
-    console.log(this.items.toString());
+    console.log(this.items.toArray().toString());
   }
+
   toArray(): T[] {
-    return this.items;
+    return this.items.toArray();
+  }
+
+  clone(): Stack<T> {
+    const newStack = new Stack<T>();
+    newStack.items = this.items.clone();
+    return newStack;
   }
 }

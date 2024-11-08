@@ -5,21 +5,23 @@ import { Deck } from "./Deck.ts";
 export class Tableau {
   piles: LinkedList<Card>[];
 
-  constructor(deck: Deck) {
+  constructor(deck?: Deck) {
     this.piles = [];
-    for (let i = 0; i < 7; i++) {
-      this.piles.push(new LinkedList<Card>());
-    }
-    for (let i = 0; i < 7; i++) {
-      for (let j = 0; j <= i; j++) {
-        const card = deck.draw();
-        if (!card) {
-          throw new Error("Not enough cards in deck");
+    if (deck) {
+      for (let i = 0; i < 7; i++) {
+        this.piles.push(new LinkedList<Card>());
+      }
+      for (let i = 0; i < 7; i++) {
+        for (let j = 0; j <= i; j++) {
+          const card = deck.draw();
+          if (!card) {
+            throw new Error("Not enough cards in deck");
+          }
+          if (j === i) {
+            card.flip();
+          }
+          this.piles[i].append(card);
         }
-        if (j === i) {
-          card.flip();
-        }
-        this.piles[i].append(card);
       }
     }
   }
@@ -91,5 +93,11 @@ export class Tableau {
         throw new Error("Only a King can be moved to an empty pile");
       }
     }
+  }
+
+  clone(): Tableau {
+    const tableau = new Tableau();
+    tableau.piles = this.piles.map((pile) => pile.clone());
+    return tableau;
   }
 }

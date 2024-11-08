@@ -28,4 +28,10 @@ export class Stockpile {
   isEmpty() {
     return this.cards.isEmpty();
   }
+
+  clone(): Stockpile {
+    const stockpile = new Stockpile([]);
+    stockpile.cards = this.cards.clone();
+    return stockpile;
+  }
 }
