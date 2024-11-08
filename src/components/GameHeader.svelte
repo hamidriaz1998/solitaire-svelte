@@ -9,6 +9,7 @@
   let isRunning: boolean;
   let score: number;
   let lastMove: number;
+  let moves: number;
 
   timer.subscribe((state) => {
     formattedTime = state.formattedTime;
@@ -18,6 +19,7 @@
   scoreStore.subscribe((state) => {
     score = state.score;
     lastMove = state.lastMove;
+    moves = state.moves;
   });
 
   function newGame() {
@@ -47,7 +49,9 @@
   </h1>
   <div class="flex items-center gap-8">
     <div class="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
-      <span class="text-lg font-semibold text-gray-700">Score:</span>
+      <span class="text-lg font-semibold text-gray-700">Moves: </span>
+      <span class="text-xl font-mono text-gray-900 mr-4">{moves}</span>
+      <span class="text-lg font-semibold text-gray-700">Score: </span>
       <span class="text-xl font-mono text-gray-900">{score}</span>
       {#if lastMove !== 0}
         <span

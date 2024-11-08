@@ -4,7 +4,7 @@ import { Foundation } from "./Foundation.ts";
 import { Stockpile } from "./StockPile.ts";
 import WastePile from "./WastePile.ts";
 import { Card } from "./Card.ts";
-import { scoreStore, SCORE_RULES } from "../stores/scoreStore.ts";
+import { SCORE_RULES, scoreStore } from "../stores/scoreStore.ts";
 
 export class Game {
   deck: Deck;
@@ -38,6 +38,7 @@ export class Game {
     if (card) {
       card.flip();
       this.wastePile.addCard(card);
+      scoreStore.incrementMoves();
     } else if (wasEmpty) {
       // Reset the stockpile from the waste pile
       while (this.wastePile.getTopCard()) {
@@ -48,6 +49,7 @@ export class Game {
         }
       }
       scoreStore.addPoints(SCORE_RULES.RECYCLE_WASTE);
+      scoreStore.incrementMoves();
     }
   }
 
@@ -57,6 +59,7 @@ export class Game {
     cardIndex: number,
   ) {
     this.tableau.moveCardBetweenPiles(fromPile, toPile, cardIndex);
+    scoreStore.incrementMoves();
   }
 
   moveCardFromWasteToTableau(tableauIndex: number) {
@@ -66,6 +69,7 @@ export class Game {
         this.tableau.addCardToPile(card, tableauIndex);
         this.wastePile.removeCard();
         scoreStore.addPoints(SCORE_RULES.WASTE_TO_TABLEAU);
+        scoreStore.incrementMoves();
       } catch (_error) {
         throw new Error("Invalid move");
       }
@@ -92,6 +96,7 @@ export class Game {
         scoreStore.addPoints(SCORE_RULES.TURN_OVER_TABLEAU_CARD);
       }
       scoreStore.addPoints(SCORE_RULES.TABLEAU_TO_FOUNDATION);
+      scoreStore.incrementMoves();
     }
   }
 
@@ -105,6 +110,7 @@ export class Game {
       try {
         this.tableau.addCardToPile(card, tableauPileIndex);
         scoreStore.addPoints(SCORE_RULES.FOUNDATION_TO_TABLEAU);
+        scoreStore.incrementMoves();
       } catch (_error) {
         foundationPile.push(card);
         throw new Error("Invalid move from foundation to tableau");
@@ -119,6 +125,7 @@ export class Game {
         this.foundation.addCard(card, foundationPileIndex);
         this.wastePile.removeCard();
         scoreStore.addPoints(SCORE_RULES.WASTE_TO_FOUNDATION);
+        scoreStore.incrementMoves();
       } catch (_error) {
         throw new Error("Invalid move from waste to foundation");
       }
