@@ -13,7 +13,7 @@
   let showWinDialog = false;
 
   const unsubscribe = gameStore.subscribe((value) => {
-    game = value;
+    game = value.currentGame;
     if (game?.isGameWon()) {
       timer.pause();
       showWinDialog = true;

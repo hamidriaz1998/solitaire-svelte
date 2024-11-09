@@ -2,7 +2,7 @@
   import { onDestroy } from "svelte";
   import { gameStore } from "../stores/gameStore";
   import Card from "./Card.svelte";
-  import type { Game } from "../gameLogic/Game.ts";
+  import { Game } from "../gameLogic/Game.js";
   import { fly, scale } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
   import { timer } from "../stores/timerStore";
@@ -10,7 +10,7 @@
   let game: Game | null = null;
 
   const unsubscribe = gameStore.subscribe((value) => {
-    game = value;
+    game = value.currentGame;
   });
 
   onDestroy(() => {

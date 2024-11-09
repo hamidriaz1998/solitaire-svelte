@@ -30,4 +30,7 @@ export class Card {
   id(): string {
     return `${this.rank}-${this.suit}`;
   }
+  clone(): Card {
+    return new Card(this.suit, this.rank, this.faceUp);
+  }
 }

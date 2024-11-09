@@ -160,7 +160,8 @@ export default class LinkedList<T> {
     const newList = new LinkedList<T>();
     let current = this.head;
     while (current) {
-      newList.append(current.data);
+      const data = (current.data as any).clone ? (current.data as any).clone() : current.data;
+      newList.append(data);
       current = current.next;
     }
     return newList;
