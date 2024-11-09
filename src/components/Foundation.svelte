@@ -83,6 +83,7 @@
         ondragover={handleDragOver}
         ondragleave={handleDragLeave}
         ondrop={(event) => handleDrop(event, i)}
+        role="region"
       >
         {#if pile.isEmpty()}
           <div
@@ -112,6 +113,7 @@
             ondragend={handleDragEnd}
             ondragover={handleDragOver}
             ondragleave={handleDragLeave}
+            role="region"
             in:fly={{
               y: -100,
               duration: 500,
