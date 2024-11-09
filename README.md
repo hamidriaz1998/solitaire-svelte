@@ -1,75 +1,146 @@
-# Svelte + TS + Vite
+# Solitaire Game
 
-This template should help get you started developing with Svelte and TypeScript
-in Vite.
+A modern implementation of the classic Solitaire (Klondike) card game built with Svelte, TypeScript, and TailwindCSS. This project features a clean design with smooth animations, drag-and-drop gameplay, and a complete scoring system.
 
-## Recommended IDE Setup
+![Solitaire Game Screenshot]
+*(screenshot.png)*
 
-[VS Code](https://code.visualstudio.com/) +
-[Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+## Features
 
-## Need an official Svelte framework?
+- 🎮 Classic Solitaire gameplay
+- 🎯 Complete scoring system
+- ⏱️ Game timer
+- 🔄 Undo/Redo functionality
+- 🖱️ Drag-and-drop card movement
+- 💫 Smooth animations
+- 🎨 Modern UI with TailwindCSS
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also
-powered by Vite. Deploy anywhere with its serverless-first approach and adapt to
-various platforms, with out of the box support for TypeScript, SCSS, and Less,
-and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+## Getting Started
 
-## Technical considerations
+### Prerequisites
 
-**Why use this over SvelteKit?**
+This project is built using Deno with Vite and Svelte. While the application will run with Node.js, Deno is required for running tests.
 
-- It brings its own routing solution which might not be preferable for some
-  users.
-- It is first and foremost a framework that just happens to use Vite under the
-  hood, not a Vite app.
+Required:
+- Deno 2.0.0 or higher
+- Node.js 18 or higher
+- npm, pnpm, or yarn package manager
 
-This template contains as little as possible to get started with Vite +
-TypeScript + Svelte, while taking into account the developer experience with
-regards to HMR and intellisense. It demonstrates capabilities on par with the
-other `create-vite` templates and is a good starting point for beginners dipping
-their toes into a Vite + Svelte project.
+Optional:
+- VS Code with Deno extension for the best development experience
 
-Should you later need the extended capabilities and extensibility provided by
-SvelteKit, the template has been structured similarly to SvelteKit so that it is
-easy to migrate.
+### Installation
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or
-`tsconfig.json`?**
-
-Setting `compilerOptions.types` shuts out all other types not explicitly listed
-in the configuration. Using triple-slash references keeps the default TypeScript
-setting of accepting type information from the entire workspace, while also
-adding `svelte` and `vite/client` type information.
-
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file
-allows VS Code to prompt the user to install the recommended extension upon
-opening the project.
-
-**Why enable `allowJs` in the TS template?**
-
-While `allowJs: false` would indeed prevent the use of `.js` files in the
-project, it does not prevent the use of JavaScript syntax in `.svelte` files. In
-addition, it would force `checkJs: false`, bringing the worst of both worlds:
-not being able to guarantee the entire codebase is TypeScript, and also having
-worse typechecking for the existing JavaScript. In addition, there are valid use
-cases in which a mixed codebase may be relevant.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by
-default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often
-surprising behavior. You can read the details
-[here](https://github.com/rixo/svelte-hmr#svelte-hmr).
-
-If you have state that's important to retain within a component, consider
-creating an external store which would not be replaced by HMR.
-
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from "svelte/store";
-export default writable(0);
+1. Clone the repository:
+```bash
+git clone https://github.com/hamidriaz1998/solitaire.git
+cd solitaire
 ```
+
+2. Install dependencies:
+```bash
+deno install
+# or
+npm install
+# or
+pnpm install
+```
+
+3. Start the development server:
+```bash
+deno task dev
+# or
+npm run dev
+# or
+pnpm dev
+```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+### Building for Production
+
+To create a production build:
+
+```bash
+deno task build
+# or
+npm run build
+# or
+pnpm build
+```
+
+## Game Rules
+
+### Objective
+The goal is to move all cards to the foundation piles, building up each suit from Ace to King.
+
+### Scoring System
+- Moving cards from waste to foundation: +10 points
+- Moving cards from waste to tableau: +5 points
+- Moving cards from tableau to foundation: +10 points
+- Turning over a tableau card: +5 points
+- Moving cards from foundation to tableau: -15 points
+- Recycling the waste pile: -100 points
+
+## Technology Stack
+
+- **Frontend Framework**: Svelte
+- **Language**: TypeScript
+- **Styling**: TailwindCSS
+- **Build Tool**: Vite
+- **Testing**: Deno Test
+
+## Project Structure
+
+```
+solitaire/
+├── src/
+│   ├── components/      # Svelte components
+│   ├── gameLogic/      # Game logic classes
+│   ├── stores/         # Svelte stores
+│   ├── DataStructures/ # Custom data structures
+│   └── tests/          # Test files
+├── public/             # Static assets
+└── ...config files
+```
+
+## Testing
+Tests are written using Deno's built-in test framework. Make sure you have [Deno installed](https://docs.deno.com/runtime/manual/getting_started/installation) before running tests.
+
+The project includes comprehensive tests for the game logic and data structures. To run the tests:
+
+```bash
+deno test
+```
+
+## Dependencies
+
+### Main Dependencies
+- Svelte
+- TypeScript
+- TailwindCSS
+
+### Development Dependencies
+- Deno or Node
+- Vite
+- PostCSS
+- Autoprefixer
+
+## Todos
+
+- [ ] Make the design responsive for mobile devices
+  - [ ] Optimize card layouts for smaller screens
+  - [ ] Add touch-friendly controls
+  - [ ] Adjust font sizes and spacing
+  - [ ] Test on various mobile devices
+
+- [ ] Migrate to Svelte 5
+  - [ ] Review breaking changes and migration guide
+  - [ ] Update dependencies and configuration
+  - [ ] Refactor components to use new syntax
+  - [ ] Test thoroughly after migration
+
+- [ ] Additional features
+  - [ ] Add hints
+  - [ ] Save game state to localStorage
+  - [ ] Implement high score system
