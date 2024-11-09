@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 class Node<T> {
   data: T;
   next: Node<T> | null;
