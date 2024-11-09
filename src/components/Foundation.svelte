@@ -1,21 +1,9 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
-  import { gameStore } from "../stores/gameStore";
   import Card from "./Card.svelte";
-  import { Game } from "../gameLogic/Game.js";
   import { fly, scale } from "svelte/transition";
   import { elasticOut } from "svelte/easing";
-  import { timer } from "../stores/timerStore";
-
-  let game: Game | null = $state(null);
-
-  const unsubscribe = gameStore.subscribe((value) => {
-    game = value.currentGame;
-  });
-
-  onDestroy(() => {
-    unsubscribe();
-  });
+  import { timer } from "../shared/shared.svelte";
+  import { gameHistory as game } from "../shared/shared.svelte";
 
   let draggedCardIndex: {
     pileIndex: number;
@@ -61,20 +49,20 @@
     if (data.source === "tableau") {
       const { pileIndex: fromPileIndex, cardIndex: fromCardIndex } = data;
       try {
-        game?.moveCardFromTableauToFoundation(
+        game.currentGame?.moveCardFromTableauToFoundation(
           fromPileIndex,
           fromCardIndex,
           targetPileIndex
         );
-        gameStore.set(game!);
+        game.push(game.currentGame!);
         draggedCardIndex = null;
       } catch (error) {
         console.error("Invalid move to foundation", error);
       }
     } else if (data.source === "waste") {
       try {
-        game?.moveCardWasteToFoundation(targetPileIndex);
-        gameStore.set(game!);
+        game.currentGame?.moveCardWasteToFoundation(targetPileIndex);
+        game.push(game.currentGame!);
         draggedCardIndex = null;
       } catch (error) {
         console.error("Invalid move to foundation", error);
@@ -85,17 +73,11 @@
   function getRandomRotation() {
     return Math.random() * 10 - 5; // Random rotation between -5 and 5 degrees
   }
-
-  let isDraggable: boolean = $state(false);
-
-  timer.subscribe((state) => {
-    isDraggable = state.isDraggable;
-  });
 </script>
 
 <div class="flex justify-center gap-4">
-  {#if game}
-    {#each game.foundation.piles as pile, i}
+  {#if game.currentGame}
+    {#each game.currentGame?.foundation?.piles as pile, i}
       <div
         class="relative w-[109px] h-[150px] border border-transparent hover:border-2 hover:border-dashed hover:border-black hover:bg-gray-200"
         ondragover={handleDragOver}
@@ -124,8 +106,9 @@
         {:else}
           <div
             class="absolute w-[109px] h-[150px] transition-all duration-300 origin-center hover:-translate-y-1 hover:scale-102 hover:shadow-lg hover:z-10"
-            draggable={isDraggable}
-            ondragstart={(event) => isDraggable && handleDragStart(event, i)}
+            draggable={timer.isDraggable}
+            ondragstart={(event) =>
+              timer.isDraggable && handleDragStart(event, i)}
             ondragend={handleDragEnd}
             ondragover={handleDragOver}
             ondragleave={handleDragLeave}

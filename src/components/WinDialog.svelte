@@ -1,30 +1,16 @@
 <script lang="ts">
   import { fade, scale } from "svelte/transition";
-  import { gameStore } from "../stores/gameStore";
-  import { timer } from "../stores/timerStore";
-  import { Game } from "../gameLogic/Game";
-  import { scoreStore } from "../stores/scoreStore";
+  import { gameHistory as game, score, timer } from "../shared/shared.svelte";
+
   interface Props {
     visible?: boolean;
   }
 
   let { visible = $bindable(false) }: Props = $props();
-
-  let finalTime: string = $state("");
-  let finalScore: number = $state(0);
-
-  timer.subscribe((state) => {
-    finalTime = state.formattedTime;
-  });
-
-  scoreStore.subscribe((state) => {
-    finalScore = state.score;
-  });
-
   function newGame() {
     timer.reset();
-    scoreStore.reset();
-    gameStore.reset();
+    score.reset();
+    game.newGame();
     timer.start();
     visible = false;
   }
@@ -44,8 +30,8 @@
       </h2>
       <p class="text-xl text-gray-600 mb-2">You've won the game!</p>
       <div class="space-y-2 mb-8">
-        <p class="text-lg text-gray-500">Final Time: {finalTime}</p>
-        <p class="text-lg text-gray-500">Final Score: {finalScore}</p>
+        <p class="text-lg text-gray-500">Final Time: {timer.formattedTime}</p>
+        <p class="text-lg text-gray-500">Final Score: {score.score}</p>
       </div>
       <button
         class="bg-gradient-to-br from-green-400 to-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg uppercase tracking-wider transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-400/30"

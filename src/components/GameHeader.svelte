@@ -1,43 +1,16 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
-  import { gameStore } from "../stores/gameStore";
-  import { timer } from "../stores/timerStore";
-  import { scoreStore } from "../stores/scoreStore";
+  import { gameHistory as game, score, timer } from "../shared/shared.svelte";
   import { fade } from "svelte/transition";
-
-  let formattedTime: string = $state("");
-  let isRunning: boolean = $state(false);
-  let score: number = $state(0);
-  let lastMove: number = $state(0);
-  let moves: number = $state(0);
-  let canUndo: boolean = $state(false);
-  let canRedo: boolean = $state(false);
-
-  const unsubscribeTimer = timer.subscribe((state) => {
-    formattedTime = state.formattedTime;
-    isRunning = state.isRunning;
-  });
-
-  const unsubscribeScore = scoreStore.subscribe((state) => {
-    score = state.score;
-    lastMove = state.lastMove;
-    moves = state.moves;
-  });
-
-  const unsubscribeGame = gameStore.subscribe((state) => {
-    canUndo = state.undoStack.length > 0;
-    canRedo = state.redoStack.length > 0;
-  });
 
   function newGame() {
     timer.reset();
-    scoreStore.reset();
-    gameStore.reset();
+    score.reset();
+    game.newGame();
     timer.start();
   }
 
   function toggleTimer() {
-    if (isRunning) {
+    if (timer.isRunning) {
       timer.pause();
     } else {
       timer.start();
@@ -45,20 +18,14 @@
   }
 
   function handleUndo() {
-    gameStore.undo();
-    scoreStore.incrementMoves();
+    game.undo();
+    score.incrementMoves();
   }
 
   function handleRedo() {
-    gameStore.redo();
-    scoreStore.incrementMoves();
+    game.redo();
+    score.incrementMoves();
   }
-
-  onDestroy(() => {
-    unsubscribeTimer();
-    unsubscribeScore();
-    unsubscribeGame();
-  });
 </script>
 
 <header
@@ -73,27 +40,28 @@
   <div class="flex items-center gap-8">
     <div class="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
       <span class="text-lg font-semibold text-gray-700">Moves:</span>
-      <span class="text-xl font-mono text-gray-900 mr-4">{moves}</span>
+      <span class="text-xl font-mono text-gray-900 mr-4">{score.moves}</span>
       <span class="text-lg font-semibold text-gray-700">Score:</span>
-      <span class="text-xl font-mono text-gray-900">{score}</span>
-      {#if lastMove !== 0}
+      <span class="text-xl font-mono text-gray-900">{score.score}</span>
+      {#if score.lastMove !== 0}
         <span
-          class="text-sm font-mono ml-2 {lastMove > 0
+          class="text-sm font-mono ml-2 {score.lastMove > 0
             ? 'text-green-600'
             : 'text-red-600'}"
           in:fade
         >
-          ({lastMove > 0 ? "+" : ""}{lastMove})
+          ({score.lastMove > 0 ? "+" : ""}{score.lastMove})
         </span>
       {/if}
     </div>
     <div class="flex items-center gap-2">
-      <span class="text-2xl font-mono text-gray-700">{formattedTime}</span>
+      <span class="text-2xl font-mono text-gray-700">{timer.formattedTime}</span
+      >
       <button
         class="p-2 rounded-full hover:bg-gray-100 transition-colors"
         onclick={toggleTimer}
       >
-        {#if !isRunning}
+        {#if !timer.isRunning}
           <!-- Play Icon -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -126,14 +94,14 @@
       <button
         class="px-5 py-2 rounded-lg font-semibold uppercase tracking-wider text-sm bg-gray-100 text-gray-500 border-2 border-gray-300 transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
         onclick={handleUndo}
-        disabled={!canUndo}
+        disabled={!game.canUndo}
       >
         Undo
       </button>
       <button
         class="px-5 py-2 rounded-lg font-semibold uppercase tracking-wider text-sm bg-gray-100 text-gray-500 border-2 border-gray-300 transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
         onclick={handleRedo}
-        disabled={!canRedo}
+        disabled={!game.canRedo}
       >
         Redo
       </button>

@@ -1,34 +1,18 @@
 <script lang="ts">
-  import { gameStore } from "./stores/gameStore";
-  import { Game } from "./gameLogic/Game";
+  import { gameHistory as game, timer } from "./shared/shared.svelte";
   import { onMount, onDestroy } from "svelte";
   import Tableau from "./components/Tableau.svelte";
   import Foundation from "./components/Foundation.svelte";
   import StockWaste from "./components/StockWaste.svelte";
   import GameHeader from "./components/GameHeader.svelte";
   import WinDialog from "./components/WinDialog.svelte";
-  import { timer } from "./stores/timerStore";
-
-  let game: Game;
-  let showWinDialog = $state(false);
-
-  const unsubscribe = gameStore.subscribe((value) => {
-    game = value.currentGame;
-    if (game?.isGameWon()) {
-      timer.pause();
-      showWinDialog = true;
-    }
-  });
 
   onMount(() => {
+    game.newGame();
     timer.start();
-    return () => {
-      unsubscribe();
-    };
   });
   onDestroy(() => {
     timer.pause();
-    unsubscribe();
   });
 </script>
 
@@ -47,7 +31,7 @@
     </div>
     <Tableau />
   </div>
-  <WinDialog visible={showWinDialog} />
+  <WinDialog visible={game.currentGame?.isGameWon() ?? false} />
 </main>
 
 <style>

@@ -1,21 +1,9 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
-  import { gameStore } from "../stores/gameStore";
+  import { gameHistory as game } from "../shared/shared.svelte";
   import Card from "./Card.svelte";
-  import { Game } from "../gameLogic/Game.js";
   import { fly, scale } from "svelte/transition";
   import { elasticOut } from "svelte/easing";
   import { timer } from "../stores/timerStore";
-
-  let game: Game | null = $state(null);
-
-  const unsubscribe = gameStore.subscribe((value) => {
-    game = value.currentGame;
-  });
-
-  onDestroy(() => {
-    unsubscribe();
-  });
 
   let draggedCardIndex: {
     pileIndex: number;
@@ -66,11 +54,11 @@
     if (data.source === "foundation") {
       const { pileIndex: foundationPileIndex } = data;
       try {
-        game?.moveCardFromFoundationToTableau(
+        game.currentGame?.moveCardFromFoundationToTableau(
           foundationPileIndex,
           targetPileIndex
         );
-        gameStore.set(new Game(game!));
+        game.push(game.currentGame!);
         draggedCardIndex = null;
       } catch (error) {
         console.error("Invalid move", error);
@@ -78,20 +66,20 @@
     } else if (data.source === "tableau") {
       const { pileIndex: fromPileIndex, cardIndex: fromCardIndex } = data;
       try {
-        game?.moveCardBetweenTableauPiles(
+        game.currentGame?.moveCardBetweenTableauPiles(
           fromPileIndex,
           targetPileIndex,
           fromCardIndex
         );
-        gameStore.set(game!);
+        game.push(game.currentGame!);
         draggedCardIndex = null;
       } catch (error) {
         console.error("Invalid move", error);
       }
     } else if (data.source === "waste") {
       try {
-        game?.moveCardFromWasteToTableau(targetPileIndex);
-        gameStore.set(game!);
+        game.currentGame?.moveCardFromWasteToTableau(targetPileIndex);
+        game.push(game.currentGame!);
         draggedCardIndex = null;
       } catch (error) {
         console.error("Invalid move", error);
@@ -111,8 +99,8 @@
 </script>
 
 <div class="tableau">
-  {#if game}
-    {#each game.tableau.piles as pile, i}
+  {#if game.currentGame}
+    {#each game.currentGame.tableau.piles as pile, i}
       <div
         class="pile"
         role="list"

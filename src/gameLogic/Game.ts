@@ -4,7 +4,8 @@ import { Foundation } from "./Foundation.ts";
 import { Stockpile } from "./StockPile.ts";
 import WastePile from "./WastePile.ts";
 import { Card } from "./Card.ts";
-import { SCORE_RULES, scoreStore } from "../stores/scoreStore.ts";
+import { SCORE_RULES } from "../stores/scoreStore.ts";
+import { score } from "../shared/shared.svelte.ts";
 
 export class Game {
   tableau: Tableau;
@@ -47,7 +48,7 @@ export class Game {
     if (card) {
       card.flip();
       this.wastePile.addCard(card);
-      scoreStore.incrementMoves();
+      score.incrementMoves();
     } else if (wasEmpty) {
       // Reset the stockpile from the waste pile
       while (this.wastePile.getTopCard()) {
@@ -57,8 +58,8 @@ export class Game {
           this.stockpile.addCardToStockpile(wasteCard);
         }
       }
-      scoreStore.addPoints(SCORE_RULES.RECYCLE_WASTE);
-      scoreStore.incrementMoves();
+      score.addPoints(SCORE_RULES.RECYCLE_WASTE);
+      score.incrementMoves();
     }
   }
 
@@ -76,7 +77,7 @@ export class Game {
       try {
         this.tableau.addCardToPile(card, tableauIndex);
         this.wastePile.removeCard();
-        scoreStore.addPoints(SCORE_RULES.WASTE_TO_TABLEAU);
+        score.addPoints(SCORE_RULES.WASTE_TO_TABLEAU);
       } catch (_error) {
         throw new Error("Invalid move");
       }
@@ -100,9 +101,9 @@ export class Game {
       const newTail = fromPile.getTail();
       if (newTail && !newTail.faceUp) {
         newTail.flip();
-        scoreStore.addPoints(SCORE_RULES.TURN_OVER_TABLEAU_CARD);
+        score.addPoints(SCORE_RULES.TURN_OVER_TABLEAU_CARD);
       }
-      scoreStore.addPoints(SCORE_RULES.TABLEAU_TO_FOUNDATION);
+      score.addPoints(SCORE_RULES.TABLEAU_TO_FOUNDATION);
     }
   }
 
@@ -115,7 +116,7 @@ export class Game {
     if (card) {
       try {
         this.tableau.addCardToPile(card, tableauPileIndex);
-        scoreStore.addPoints(SCORE_RULES.FOUNDATION_TO_TABLEAU);
+        score.addPoints(SCORE_RULES.FOUNDATION_TO_TABLEAU);
       } catch (_error) {
         foundationPile.push(card);
         throw new Error("Invalid move from foundation to tableau");
@@ -129,7 +130,7 @@ export class Game {
       try {
         this.foundation.addCard(card, foundationPileIndex);
         this.wastePile.removeCard();
-        scoreStore.addPoints(SCORE_RULES.WASTE_TO_FOUNDATION);
+        score.addPoints(SCORE_RULES.WASTE_TO_FOUNDATION);
       } catch (_error) {
         throw new Error("Invalid move from waste to foundation");
       }
