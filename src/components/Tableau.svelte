@@ -3,7 +3,7 @@
   import Card from "./Card.svelte";
   import { fly, scale } from "svelte/transition";
   import { elasticOut } from "svelte/easing";
-  import { timer } from "../stores/timerStore";
+  import { timer } from "../shared/shared.svelte";
 
   let draggedCardIndex: {
     pileIndex: number;
@@ -90,12 +90,6 @@
   function getCardDelay(index: number) {
     return index * 50; // Cascading delay for cards
   }
-
-  let isDraggable: boolean = $state(false);
-
-  timer.subscribe((state) => {
-    isDraggable = state.isDraggable;
-  });
 </script>
 
 <div class="tableau">
@@ -124,7 +118,7 @@
                 role="listitem"
                 class="card"
                 style="top: {j * 40}px;"
-                draggable={isDraggable && card.faceUp}
+                draggable={timer.isDraggable && card.faceUp}
                 in:fly={{
                   y: -50,
                   duration: 400,
@@ -132,7 +126,9 @@
                   easing: elasticOut,
                 }}
                 ondragstart={(event) =>
-                  isDraggable && card.faceUp && handleDragStart(event, i, j)}
+                  timer.isDraggable &&
+                  card.faceUp &&
+                  handleDragStart(event, i, j)}
                 ondragend={handleDragEnd}
               >
                 <Card {card} />

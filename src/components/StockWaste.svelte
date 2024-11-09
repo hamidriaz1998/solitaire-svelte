@@ -22,15 +22,13 @@
   function handleDragEnd(event: DragEvent) {
     (event.currentTarget as HTMLElement).classList.remove("dragging");
   }
-
-  let isDraggable = $state(timer.isDraggable);
 </script>
 
 <div class="flex gap-4 justify-center items-center">
   <button
     class="relative w-[109px] h-[150px] rounded-lg flex items-center justify-center cursor-pointer group"
     onclick={handleStockClick}
-    disabled={!isDraggable}
+    disabled={!timer.isDraggable}
   >
     {#if game.currentGame && !game.currentGame.stockpile.isEmpty()}
       <div
@@ -60,9 +58,9 @@
     {#if game.currentGame && !game.currentGame.wastePile.pile.isEmpty()}
       <div
         class="absolute w-full h-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:z-10"
-        draggable={isDraggable}
+        draggable={timer.isDraggable}
         role="list"
-        ondragstart={(event) => isDraggable && handleDragStart(event)}
+        ondragstart={(event) => timer.isDraggable && handleDragStart(event)}
         ondragend={(event) => handleDragEnd(event)}
         in:fly={{
           x: -200,
