@@ -32,7 +32,10 @@ function createGameStore() {
             set(currentState);
         },
         undo: () => {
-            if (currentState.undoStack.length === 0) return;
+            if (currentState.undoStack.length === 0) {
+                set(currentState);
+                return;
+            }
 
             const previousGame = currentState.undoStack[currentState.undoStack.length - 1];
             currentState = {
@@ -43,7 +46,10 @@ function createGameStore() {
             set(currentState);
         },
         redo: () => {
-            if (currentState.redoStack.length === 0) return;
+            if (currentState.redoStack.length === 0) {
+                set(currentState);
+                return;
+            }
 
             const nextGame = currentState.redoStack[currentState.redoStack.length - 1];
             currentState = {

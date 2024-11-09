@@ -20,7 +20,7 @@
   function newGame() {
     timer.reset();
     scoreStore.reset();
-    gameStore.set(new Game());
+    gameStore.reset();
     timer.start();
     visible = false;
   }
