@@ -2,8 +2,7 @@
 
 A modern implementation of the classic Solitaire (Klondike) card game built with Svelte, TypeScript, and TailwindCSS. This project features a clean design with smooth animations, drag-and-drop gameplay, and a complete scoring system.
 
-![Solitaire Game Screenshot]
-*(screenshot.png)*
+![Solitaire Game Screenshot](screenshot.png)
 
 ## Features
 
