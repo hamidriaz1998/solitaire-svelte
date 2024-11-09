@@ -16,6 +16,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 jobs:
   test:
@@ -29,6 +31,7 @@ jobs:
         uses: denoland/setup-deno@v2.0.0 
         with:
           deno-version: v2.0.5
+
       - name: Install Packages
         run: deno install
 
@@ -40,3 +43,20 @@ jobs:
 
       - name: Run tests
         run: deno test -A
+
+      - name: Build
+        run: deno task build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      
