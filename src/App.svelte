@@ -1,7 +1,7 @@
 <script lang="ts">
   import { gameStore } from "./stores/gameStore";
   import { Game } from "./gameLogic/Game";
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import Tableau from "./components/Tableau.svelte";
   import Foundation from "./components/Foundation.svelte";
   import StockWaste from "./components/StockWaste.svelte";
@@ -10,7 +10,7 @@
   import { timer } from "./stores/timerStore";
 
   let game: Game;
-  let showWinDialog = false;
+  let showWinDialog = $state(false);
 
   const unsubscribe = gameStore.subscribe((value) => {
     game = value.currentGame;
@@ -25,6 +25,10 @@
     return () => {
       unsubscribe();
     };
+  });
+  onDestroy(() => {
+    timer.pause();
+    unsubscribe();
   });
 </script>
 

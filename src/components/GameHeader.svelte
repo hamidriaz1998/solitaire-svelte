@@ -5,13 +5,13 @@
   import { scoreStore } from "../stores/scoreStore";
   import { fade } from "svelte/transition";
 
-  let formattedTime: string;
-  let isRunning: boolean;
-  let score: number;
-  let lastMove: number;
-  let moves: number;
-  let canUndo: boolean = false;
-  let canRedo: boolean = false;
+  let formattedTime: string = $state("");
+  let isRunning: boolean = $state(false);
+  let score: number = $state(0);
+  let lastMove: number = $state(0);
+  let moves: number = $state(0);
+  let canUndo: boolean = $state(false);
+  let canRedo: boolean = $state(false);
 
   const unsubscribeTimer = timer.subscribe((state) => {
     formattedTime = state.formattedTime;
@@ -91,7 +91,7 @@
       <span class="text-2xl font-mono text-gray-700">{formattedTime}</span>
       <button
         class="p-2 rounded-full hover:bg-gray-100 transition-colors"
-        on:click={toggleTimer}
+        onclick={toggleTimer}
       >
         {#if !isRunning}
           <!-- Play Icon -->
@@ -119,20 +119,20 @@
     <div class="flex gap-4">
       <button
         class="px-5 py-2 rounded-lg font-semibold uppercase tracking-wider text-sm bg-gradient-to-br from-green-400 to-green-600 text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-400/30"
-        on:click={newGame}
+        onclick={newGame}
       >
         New Game
       </button>
       <button
         class="px-5 py-2 rounded-lg font-semibold uppercase tracking-wider text-sm bg-gray-100 text-gray-500 border-2 border-gray-300 transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-        on:click={handleUndo}
+        onclick={handleUndo}
         disabled={!canUndo}
       >
         Undo
       </button>
       <button
         class="px-5 py-2 rounded-lg font-semibold uppercase tracking-wider text-sm bg-gray-100 text-gray-500 border-2 border-gray-300 transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-        on:click={handleRedo}
+        onclick={handleRedo}
         disabled={!canRedo}
       >
         Redo

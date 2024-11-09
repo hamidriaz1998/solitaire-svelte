@@ -1,6 +1,10 @@
 <script lang="ts">
   import { Card } from "../gameLogic/Card";
-  export let card: Card | undefined;
+  interface Props {
+    card: Card | undefined;
+  }
+
+  let { card }: Props = $props();
 </script>
 
 <div

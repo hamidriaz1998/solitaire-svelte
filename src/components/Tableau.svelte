@@ -7,7 +7,7 @@
   import { elasticOut } from "svelte/easing";
   import { timer } from "../stores/timerStore";
 
-  let game: Game | null = null;
+  let game: Game | null = $state(null);
 
   const unsubscribe = gameStore.subscribe((value) => {
     game = value.currentGame;
@@ -103,7 +103,7 @@
     return index * 50; // Cascading delay for cards
   }
 
-  let isDraggable: boolean;
+  let isDraggable: boolean = $state(false);
 
   timer.subscribe((state) => {
     isDraggable = state.isDraggable;
@@ -116,9 +116,9 @@
       <div
         class="pile"
         role="list"
-        on:dragover={handleDragOver}
-        on:dragleave={handleDragLeave}
-        on:drop={(event) => handleDrop(event, i)}
+        ondragover={handleDragOver}
+        ondragleave={handleDragLeave}
+        ondrop={(event) => handleDrop(event, i)}
       >
         {#if pile.isEmpty()}
           <div
@@ -128,7 +128,7 @@
               easing: elasticOut,
               delay: i * 100,
             }}
-          />
+          ></div>
         {:else}
           <div class="cards-container">
             {#each pile.toArray() as card, j (card.id())}
@@ -143,9 +143,9 @@
                   delay: getCardDelay(j),
                   easing: elasticOut,
                 }}
-                on:dragstart={(event) =>
+                ondragstart={(event) =>
                   isDraggable && card.faceUp && handleDragStart(event, i, j)}
-                on:dragend={handleDragEnd}
+                ondragend={handleDragEnd}
               >
                 <Card {card} />
               </div>

@@ -7,7 +7,7 @@
   import { cubicOut } from "svelte/easing";
   import { timer } from "../stores/timerStore";
 
-  let game: Game | null = null;
+  let game: Game | null = $state(null);
 
   const unsubscribe = gameStore.subscribe((value) => {
     game = value.currentGame;
@@ -34,7 +34,7 @@
     (event.currentTarget as HTMLElement).classList.remove("dragging");
   }
 
-  let isDraggable: boolean;
+  let isDraggable: boolean = $state(false);
 
   timer.subscribe((state) => {
     isDraggable = state.isDraggable;
@@ -44,7 +44,7 @@
 <div class="flex gap-4 justify-center items-center">
   <button
     class="relative w-[109px] h-[150px] rounded-lg flex items-center justify-center cursor-pointer group"
-    on:click={handleStockClick}
+    onclick={handleStockClick}
     disabled={!isDraggable}
   >
     {#if game && !game.stockpile.isEmpty()}
@@ -77,8 +77,8 @@
         class="absolute w-full h-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:z-10"
         draggable={isDraggable}
         role="list"
-        on:dragstart={(event) => isDraggable && handleDragStart(event)}
-        on:dragend={(event) => handleDragEnd(event)}
+        ondragstart={(event) => isDraggable && handleDragStart(event)}
+        ondragend={(event) => handleDragEnd(event)}
         in:fly={{
           x: -200,
           y: 0,

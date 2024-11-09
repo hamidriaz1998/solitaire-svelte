@@ -7,7 +7,7 @@
   import { elasticOut } from "svelte/easing";
   import { timer } from "../stores/timerStore";
 
-  let game: Game | null = null;
+  let game: Game | null = $state(null);
 
   const unsubscribe = gameStore.subscribe((value) => {
     game = value.currentGame;
@@ -86,7 +86,7 @@
     return Math.random() * 10 - 5; // Random rotation between -5 and 5 degrees
   }
 
-  let isDraggable: boolean;
+  let isDraggable: boolean = $state(false);
 
   timer.subscribe((state) => {
     isDraggable = state.isDraggable;
@@ -98,9 +98,9 @@
     {#each game.foundation.piles as pile, i}
       <div
         class="relative w-[109px] h-[150px] border border-transparent hover:border-2 hover:border-dashed hover:border-black hover:bg-gray-200"
-        on:dragover={handleDragOver}
-        on:dragleave={handleDragLeave}
-        on:drop={(event) => handleDrop(event, i)}
+        ondragover={handleDragOver}
+        ondragleave={handleDragLeave}
+        ondrop={(event) => handleDrop(event, i)}
       >
         {#if pile.isEmpty()}
           <div
@@ -125,10 +125,10 @@
           <div
             class="absolute w-[109px] h-[150px] transition-all duration-300 origin-center hover:-translate-y-1 hover:scale-102 hover:shadow-lg hover:z-10"
             draggable={isDraggable}
-            on:dragstart={(event) => isDraggable && handleDragStart(event, i)}
-            on:dragend={handleDragEnd}
-            on:dragover={handleDragOver}
-            on:dragleave={handleDragLeave}
+            ondragstart={(event) => isDraggable && handleDragStart(event, i)}
+            ondragend={handleDragEnd}
+            ondragover={handleDragOver}
+            ondragleave={handleDragLeave}
             in:fly={{
               y: -100,
               duration: 500,
