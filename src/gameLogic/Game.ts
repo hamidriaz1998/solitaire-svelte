@@ -4,9 +4,8 @@ import { Foundation } from "./Foundation.ts";
 import { Stockpile } from "./StockPile.ts";
 import WastePile from "./WastePile.ts";
 import { Card } from "./Card.ts";
-import { SCORE_RULES } from "../stores/scoreStore.ts";
 import { score } from "../shared/shared.svelte.ts";
-
+import { SCORE_RULES } from "../shared/Score.svelte.ts";
 export class Game {
   tableau: Tableau;
   foundation: Foundation;
