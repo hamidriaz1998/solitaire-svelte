@@ -33,13 +33,14 @@ Optional:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/hamidriaz1998/solitaire.git
+git clone https://gitlab.com/hamidriaz1999/csc200m24pid10.git
 cd solitaire
 ```
 
 2. Install dependencies:
 ```bash
 deno install
+deno install --allow-scripts=npm:svelte-preprocess@5.1.4
 # or
 npm install
 # or
