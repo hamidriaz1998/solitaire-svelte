@@ -97,7 +97,7 @@ solitaire/
 ├── src/
 │   ├── components/      # Svelte components
 │   ├── gameLogic/      # Game logic classes
-│   ├── stores/         # Svelte stores
+│   ├── shared/         # Shared states
 │   ├── DataStructures/ # Custom data structures
 │   └── tests/          # Test files
 ├── public/             # Static assets
@@ -129,16 +129,8 @@ deno test
 ## Todos
 
 - [ ] Make the design responsive for mobile devices
-  - [ ] Optimize card layouts for smaller screens
-  - [ ] Add touch-friendly controls
-  - [ ] Adjust font sizes and spacing
-  - [ ] Test on various mobile devices
 
-- [ ] Migrate to Svelte 5
-  - [ ] Review breaking changes and migration guide
-  - [ ] Update dependencies and configuration
-  - [ ] Refactor components to use new syntax
-  - [ ] Test thoroughly after migration
+- [X] Migrate to Svelte 5
 
 - [ ] Additional features
   - [ ] Add hints
